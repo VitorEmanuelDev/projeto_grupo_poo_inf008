@@ -1,20 +1,29 @@
 package genius;
 
-public abstract class Player {
-	
-	Placar placar;
-	
-	public Player() {
+public class Player {
 
+	Placar placar;
+	String nome;
+
+	public Player(Placar placar) {
+		this.placar = placar;
 	}
 
-	public Placar getPontuacao() {
+	public Placar getPlacar() {
 		return placar;
 	}
 
-	public void setPontuacao(Placar pontuacao) {
-		this.placar = pontuacao;
+	public void setPlacar(Placar placar) {
+		this.placar = placar;
 	}
-		
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
 
 }
