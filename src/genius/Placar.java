@@ -42,21 +42,21 @@ public class Placar {
     /**
      * Aumenta a pontuacao de acordo com o nivel
      */
-    public void increaseScore() {
+    public void aumentarPontuacao() {
         pontuacao += fase * (PONTUACAO_MINIMA + random.nextInt(10));
     }
 
     /**
      * @return  informa a fase do jogador
      */
-    public int getLevel() {
+    public int getFase() {
         return fase;
     }
 
     /**
      * @return informa a pontuacao do jogador
      */
-    public int getScore() {
+    public int getPontuacao() {
         return pontuacao;
     }
 }

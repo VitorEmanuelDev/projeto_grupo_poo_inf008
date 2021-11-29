@@ -24,8 +24,11 @@ import java.io.IOException;
 public class Genius extends JPanel implements ActionListener, MouseListener {
 
 	private static Genius genius;
-	private Placar placar;
-	private SequenciaDeCores sequencia;
+	//private Placar placar;
+	private Player player1;
+	private Player player2;
+	private SequenciaDeCores sequencia1;
+	private SequenciaDeCores sequencia2;
 	private JButton botao;
 	private QuadradosCores[] cores;
 	private Timer temporizador;
@@ -65,7 +68,9 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		criarFrame();
 		criarBotaoPrincipal();
 
-		placar = new Placar();
+		//placar = new Placar();
+		player1 = new Player(new Placar());
+		player2 = new Player(new Placar());
 		cores = new QuadradosCores[NUM_PADS];
 		temporizador = new Timer(TEMPORIZADOR_DELAY, this);
 		jogoRodando = false;
@@ -146,9 +151,10 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		// Desenhar placar:
 		g.setColor(Color.WHITE);
 		g.setFont(new Font("Comic", Font.BOLD, 14));
-		g.drawString("Fase:  " + placar.getLevel(), (LARGURA/2) - 36,  ESCPACO_PADS + ESPACO_PADS_OFFSET );
-		g.drawString("Pontuacao:  " + placar.getScore(), (LARGURA/2) - 36,  ESCPACO_PADS + ESPACO_PADS_OFFSET + 20);
-
+		g.drawString("Fase P1:  " + player1.getPlacar().getFase(), (LARGURA/2) - 36,  ESCPACO_PADS + ESPACO_PADS_OFFSET );
+		g.drawString("Pontuacao P1:  " + player1.getPlacar().getPontuacao(), (LARGURA/2) - 36,  ESCPACO_PADS + ESPACO_PADS_OFFSET + 20);
+		//g.drawString("Fase P2:  " + player2.getPlacar().getFase(), (LARGURA/2) - 60,  ESCPACO_PADS + ESPACO_PADS_OFFSET );
+		//g.drawString("Pontuacao P2:  " + player2.getPlacar().getPontuacao(), (LARGURA/2) - 60,  ESCPACO_PADS + ESPACO_PADS_OFFSET + 20); 
 		// Texto durante o jogo
 		g.setFont(new Font("Comic", Font.BOLD, 20));
 		if (jogoTerminado) {
@@ -199,15 +205,17 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 
 
 	/**
-	 * Iniciar o jogo pelo temporizador, reinicializando o placar e iniciando um sequencia
+	 * Iniciar o jogo pelo temporizador, reinicializando o placar e iniciando uma sequencia
 	 */
 	private void iniciarJogo() {
 		temporizador.start();
 		triggerTodasPiscando(false);
 		jogoRodando = true;
 		jogoTerminado = false;
-		placar.reinicializar();
-		placar.proximaFase();
+		player1.getPlacar().reinicializar();
+		player1.getPlacar().proximaFase();
+		player2.getPlacar().reinicializar();
+		player2.getPlacar().proximaFase();
 		iniciarUmaSequencia();
 	}
 
@@ -215,7 +223,8 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	 * Iniciar um sequencia com o numero piscadas equivalente ao fase do jogador
 	 */
 	private void iniciarUmaSequencia() {
-		sequencia = new SequenciaDeCores(placar.getLevel());
+		sequencia1 = new SequenciaDeCores(player1.getPlacar().getFase());
+		sequencia2 = new SequenciaDeCores(player2.getPlacar().getFase());
 		indiceDePadroesDoJogo = 0;
 		indiceDePadroesDoJogador = 0;
 		mostrarSequencia = true;
@@ -225,11 +234,11 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	 * Avance para o proximo elemento da sequencia
 	 */
 	private void avanceSequencia() {
-		if (indiceDePadroesDoJogo >= sequencia.getTamanho()) {
+		if (indiceDePadroesDoJogo >= sequencia1.getTamanho()) {
 			mostrarSequencia = false;
 			return;
 		}
-		cores[sequencia.getIndice(indiceDePadroesDoJogo)].setPiscada(true);
+		cores[sequencia1.getIndice(indiceDePadroesDoJogo)].setPiscada(true);
 		indiceDePadroesDoJogo++;
 	}
 
@@ -239,7 +248,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	 */
 	private void avancarDeFase() {
 		avancarDeFase = true;
-		placar.proximaFase();
+		player1.getPlacar().proximaFase();
 	}
 
 	/**
@@ -247,7 +256,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	 */
 	private void iniciarProximaFase() {
 		avancarDeFase = false;
-		sequencia = null;
+		sequencia1 = null;
 		iniciarUmaSequencia();
 	}
 
@@ -307,10 +316,10 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			cores[indiceDaCorClicada].setPiscada(true);
 			repaint();
 			cliques = 0;
-			if (indiceDaCorClicada == sequencia.getIndice(indiceDePadroesDoJogador)) {
-				placar.increaseScore();
+			if (indiceDaCorClicada == sequencia1.getIndice(indiceDePadroesDoJogador)) {
+				player1.getPlacar().aumentarPontuacao();
 				indiceDePadroesDoJogador++;
-				if (indiceDePadroesDoJogador >= sequencia.getTamanho())
+				if (indiceDePadroesDoJogador >= sequencia1.getTamanho())
 					avancarDeFase();
 			}
 			else
