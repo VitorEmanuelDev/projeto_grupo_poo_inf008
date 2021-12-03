@@ -28,7 +28,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	private static Genius genius;
 	private List<Jogador> jogadores;
 	private SequenciaDeCores sequenciaAtual;
-	private JButton botao;
+	private JButton botaoIniciar;
 	private QuadradosCores[] cores;
 	private Timer temporizador;
 
@@ -51,14 +51,15 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 
 
 	// COMANDOS DO JOGO
-	private boolean jogoRodando;
-	private boolean jogoTerminado;
-	private boolean avancarDeFase;
-	private boolean mostrarSequencia;
-	private int cliques;
+	private boolean jogoRodando = false;
+	private boolean jogoTerminado = false;
+	private boolean jogadorErrou = false;
+	private boolean avancarDeFase = false;
+	private boolean mostrarSequencia = false;
+	private int cliques = 0;
 	private int indiceDePadroesDoJogador;
 	private int indiceDePadroesDoJogo;
-	private int indexJogadorAtual;
+	private int indexJogadorAtual = 0;
 
 
 	/**
@@ -72,14 +73,8 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		jogadores = new ArrayList<Jogador>();
 		jogadores.add(new Jogador("player 1"));
 		jogadores.add(new Jogador("player 2"));
-		indexJogadorAtual = 0;
 		cores = new QuadradosCores[NUM_PADS];
 		temporizador = new Timer(TEMPORIZADOR_DELAY, this);
-		jogoRodando = false;
-		jogoTerminado = false;
-		avancarDeFase = false;
-		mostrarSequencia = false;
-		cliques = 0;
 		inicializarQuadradosDeCores();
 		repaint();
 	}
@@ -102,17 +97,17 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	 * Cria o notao principal
 	 */
 	private void criarBotaoPrincipal() {
-		botao = new JButton("INICIAR");
-		botao.setBackground(Color.GREEN);
-		botao.setForeground(Color.BLACK);
-		botao.setFocusPainted(false);
-		botao.setFont(new Font("Comic", Font.BOLD, 10));
+		botaoIniciar = new JButton("JOGAR");
+		botaoIniciar.setBackground(Color.GREEN);
+		botaoIniciar.setForeground(Color.BLACK);
+		botaoIniciar.setFocusPainted(false);
+		botaoIniciar.setFont(new Font("Comic", Font.BOLD, 10));
 		int offset_x = 250;
 		int offset_y = 292;
-		botao.setBounds(offset_x, offset_y, LARGURA_BOTAO_PRINCIPAL, ALTURA_BOTAO_PRINCIPAL);
-		botao.addActionListener(new MainButtonListener());
+		botaoIniciar.setBounds(offset_x, offset_y, LARGURA_BOTAO_PRINCIPAL, ALTURA_BOTAO_PRINCIPAL);
+		botaoIniciar.addActionListener(new MainButtonListener());
 		setLayout(null);
-		add(botao);
+		add(botaoIniciar);
 	}
 
 	/**
@@ -148,20 +143,22 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			cores[i].desenharColorirQuadrado(g);
 		}
 
-		botao.setText("JOGAR");
-
 		// Desenhar placar:
 		g.setColor(Color.WHITE);
-		g.setFont(new Font("Comic", Font.BOLD, 14));
-		g.drawString("Jogador: " + jogadores.get(indexJogadorAtual).getNome(), (LARGURA/2) - 60,  ESCPACO_PADS + ESPACO_PADS_OFFSET);
-		g.drawString("Fase:  " + jogadores.get(indexJogadorAtual).getPlacar().getFase(), (LARGURA/2) - 60,  ESCPACO_PADS + ESPACO_PADS_OFFSET + 20 );
-		g.drawString("Pontuacao:  " + jogadores.get(indexJogadorAtual).getPlacar().getPontuacao(), (LARGURA/2) - 60,  ESCPACO_PADS + ESPACO_PADS_OFFSET + 40);
-		 
+		if (jogoRodando) {
+			g.setFont(new Font("Comic", Font.BOLD, 14));
+			g.drawString("Jogador: " + jogadores.get(indexJogadorAtual).getNome(), (LARGURA/2) - 60,  ESCPACO_PADS + ESPACO_PADS_OFFSET);
+			g.drawString("Fase:  " + jogadores.get(indexJogadorAtual).getPlacar().getFase(), (LARGURA/2) - 60,  ESCPACO_PADS + ESPACO_PADS_OFFSET + 20 );
+			g.drawString("Pontuacao:  " + jogadores.get(indexJogadorAtual).getPlacar().getPontuacao(), (LARGURA/2) - 60,  ESCPACO_PADS + ESPACO_PADS_OFFSET + 40);
+		}
 		// Texto durante o jogo
 		g.setFont(new Font("Comic", Font.BOLD, 20));
-		if (jogoTerminado) {
+		if (jogoTerminado || jogadorErrou) {
 			g.setColor(Color.RED);
-			g.drawString("Errou!!!", (LARGURA/2) - 40,  550);
+			// se indexJogadorAtual for 0 então significa que o ultimo jogador errou, nesse caso
+			// usamos o tamanho da lista de jogadores como base para pegar o index adequado
+			int indexJogadorErrou = (indexJogadorAtual == 0 ? jogadores.size() : indexJogadorAtual) - 1;
+			g.drawString(jogadores.get(indexJogadorErrou).getNome() + " errou!!!", (LARGURA/2) - 80,  550);
 		}
 
 	}
@@ -172,7 +169,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			return;
 
 		if (jogoTerminado) {
-			JogoTerminado();
+			finalizaJogo();
 			repaint();
 			return;
 		}
@@ -210,11 +207,12 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Iniciar o jogo pelo temporizador, reinicializando o placar e iniciando uma sequencia
 	 */
-	private void iniciarJogo() {
+	private void iniciarJogada() {
 		temporizador.start();
 		triggerTodasPiscando(false);
 		jogoRodando = true;
 		jogoTerminado = false;
+		botaoIniciar.setVisible(jogoTerminado);
 		jogadores.get(indexJogadorAtual).getPlacar().reinicializar();
 		jogadores.get(indexJogadorAtual).getPlacar().proximaFase();
 		iniciarUmaSequencia();
@@ -264,10 +262,13 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	 * jogo terminado, parar temporizador, mas manter placar
 	 * 
 	 */
-	private void JogoTerminado() {
+	private void finalizaJogo() {
 		alertaJogoTerminado(true);
 		jogoRodando = false;
 		jogoTerminado = true;
+		jogadorErrou = false;
+		botaoIniciar.setVisible(jogoTerminado);
+		indexJogadorAtual = 0;
 		temporizador.stop();
 	}
 
@@ -280,7 +281,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			cores[i].setJogoTerminado(bool);
 	}
 
-
 	/**
 	 *  Mudar o piscar das cores
 	 * @param bool  true se os quadrados devem estar piscando, do contrario, false
@@ -289,7 +289,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i< NUM_PADS; i++)
 			cores[i].setPiscada(bool);
 	}
-
 
 	/**
 	 * Listener class to the Main button
@@ -300,11 +299,10 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		public void actionPerformed(ActionEvent e) {
 			if (!jogoRodando) {
 				alertaJogoTerminado(false);
-				iniciarJogo();
+				iniciarJogada();
 			}
 		}
 	}
-
 
 	// Mouse Listeners:
 	@Override
@@ -317,13 +315,17 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			repaint();
 			cliques = 0;
 			if (indiceDaCorClicada == sequenciaAtual.getIndice(indiceDePadroesDoJogador)) {
+				jogadorErrou = false;
 				jogadores.get(indexJogadorAtual).getPlacar().aumentarPontuacao();
 				indiceDePadroesDoJogador++;
 				if (indiceDePadroesDoJogador >= sequenciaAtual.getTamanho()) {
 					avancarDeFase();
 				}
-			} else if (indexJogadorAtual < jogadores.size()) {
+			} else if (indexJogadorAtual + 1 < jogadores.size()) {
+				jogadorErrou = true;
 				indexJogadorAtual++;
+				cliques = 0;
+				iniciarJogada();
 			} else {
 				jogoTerminado = true;
 			}
