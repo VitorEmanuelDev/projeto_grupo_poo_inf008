@@ -17,6 +17,8 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents the game's flow and interface
@@ -24,12 +26,9 @@ import java.io.IOException;
 public class Genius extends JPanel implements ActionListener, MouseListener {
 
 	private static Genius genius;
-	//private Placar placar;
-	private Player player1;
-	private Player player2;
-	private SequenciaDeCores sequencia1;
-	private SequenciaDeCores sequencia2;
-	private JButton botao;
+	private List<Jogador> jogadores;
+	private SequenciaDeCores sequenciaAtual;
+	private JButton botaoIniciar;
 	private QuadradosCores[] cores;
 	private Timer temporizador;
 
@@ -52,13 +51,15 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 
 
 	// COMANDOS DO JOGO
-	private boolean jogoRodando;
-	private boolean jogoTerminado;
-	private boolean avancarDeFase;
-	private boolean mostrarSequencia;
-	private int cliques;
+	private boolean jogoRodando = false;
+	private boolean jogoTerminado = false;
+	private boolean jogadorErrou = false;
+	private boolean avancarDeFase = false;
+	private boolean mostrarSequencia = false;
+	private int cliques = 0;
 	private int indiceDePadroesDoJogador;
 	private int indiceDePadroesDoJogo;
+	private int indexJogadorAtual = 0;
 
 
 	/**
@@ -69,16 +70,12 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		criarBotaoPrincipal();
 
 		//placar = new Placar();
-		player1 = new Player(new Placar());
-		player2 = new Player(new Placar());
+		jogadores = new ArrayList<Jogador>();
+		jogadores.add(new Jogador("player 1"));
+		jogadores.add(new Jogador("player 2"));
 		cores = new QuadradosCores[NUM_PADS];
 		temporizador = new Timer(TEMPORIZADOR_DELAY, this);
-		jogoRodando = false;
-		jogoTerminado = false;
-		avancarDeFase = false;
-		mostrarSequencia = false;
-		cliques = 0;
-		inicializarQudradosDeCores();
+		inicializarQuadradosDeCores();
 		repaint();
 	}
 
@@ -100,23 +97,23 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	 * Cria o notao principal
 	 */
 	private void criarBotaoPrincipal() {
-		botao = new JButton("INICIAR");
-		botao.setBackground(Color.GREEN);
-		botao.setForeground(Color.BLACK);
-		botao.setFocusPainted(false);
-		botao.setFont(new Font("Comic", Font.BOLD, 10));
+		botaoIniciar = new JButton("JOGAR");
+		botaoIniciar.setBackground(Color.GREEN);
+		botaoIniciar.setForeground(Color.BLACK);
+		botaoIniciar.setFocusPainted(false);
+		botaoIniciar.setFont(new Font("Comic", Font.BOLD, 10));
 		int offset_x = 250;
 		int offset_y = 292;
-		botao.setBounds(offset_x, offset_y, LARGURA_BOTAO_PRINCIPAL, ALTURA_BOTAO_PRINCIPAL);
-		botao.addActionListener(new MainButtonListener());
+		botaoIniciar.setBounds(offset_x, offset_y, LARGURA_BOTAO_PRINCIPAL, ALTURA_BOTAO_PRINCIPAL);
+		botaoIniciar.addActionListener(new MainButtonListener());
 		setLayout(null);
-		add(botao);
+		add(botaoIniciar);
 	}
 
 	/**
 	 *Inicializa os quadrados 
 	 */
-	private void inicializarQudradosDeCores() {
+	private void inicializarQuadradosDeCores() {
 		cores[0] = new QuadradosCores(Color.GREEN, LARGURA_PADS, ALTURA_PADS, 100, 105);
 		cores[1] = new QuadradosCores(Color.RED, LARGURA_PADS, ALTURA_PADS, 315, 105);
 		cores[2] = new QuadradosCores(Color.YELLOW, LARGURA_PADS, ALTURA_PADS, 100, 320);
@@ -146,20 +143,22 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			cores[i].desenharColorirQuadrado(g);
 		}
 
-		botao.setText("JOGAR");
-
 		// Desenhar placar:
 		g.setColor(Color.WHITE);
-		g.setFont(new Font("Comic", Font.BOLD, 14));
-		g.drawString("Fase P1:  " + player1.getPlacar().getFase(), (LARGURA/2) - 36,  ESCPACO_PADS + ESPACO_PADS_OFFSET );
-		g.drawString("Pontuacao P1:  " + player1.getPlacar().getPontuacao(), (LARGURA/2) - 36,  ESCPACO_PADS + ESPACO_PADS_OFFSET + 20);
-		//g.drawString("Fase P2:  " + player2.getPlacar().getFase(), (LARGURA/2) - 60,  ESCPACO_PADS + ESPACO_PADS_OFFSET );
-		//g.drawString("Pontuacao P2:  " + player2.getPlacar().getPontuacao(), (LARGURA/2) - 60,  ESCPACO_PADS + ESPACO_PADS_OFFSET + 20); 
+		if (jogoRodando) {
+			g.setFont(new Font("Comic", Font.BOLD, 14));
+			g.drawString("Jogador: " + jogadores.get(indexJogadorAtual).getNome(), (LARGURA/2) - 60,  ESCPACO_PADS + ESPACO_PADS_OFFSET);
+			g.drawString("Fase:  " + jogadores.get(indexJogadorAtual).getPlacar().getFase(), (LARGURA/2) - 60,  ESCPACO_PADS + ESPACO_PADS_OFFSET + 20 );
+			g.drawString("Pontuacao:  " + jogadores.get(indexJogadorAtual).getPlacar().getPontuacao(), (LARGURA/2) - 60,  ESCPACO_PADS + ESPACO_PADS_OFFSET + 40);
+		}
 		// Texto durante o jogo
 		g.setFont(new Font("Comic", Font.BOLD, 20));
-		if (jogoTerminado) {
+		if (jogoTerminado || jogadorErrou) {
 			g.setColor(Color.RED);
-			g.drawString("Game Over", (LARGURA/2) - 60,  550);
+			// se indexJogadorAtual for 0 então significa que o ultimo jogador errou, nesse caso
+			// usamos o tamanho da lista de jogadores como base para pegar o index adequado
+			int indexJogadorErrou = (indexJogadorAtual == 0 ? jogadores.size() : indexJogadorAtual) - 1;
+			g.drawString(jogadores.get(indexJogadorErrou).getNome() + " errou!!!", (LARGURA/2) - 80,  550);
 		}
 
 	}
@@ -170,7 +169,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			return;
 
 		if (jogoTerminado) {
-			JogoTerminado();
+			finalizaJogo();
 			repaint();
 			return;
 		}
@@ -182,8 +181,9 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 				avanceSequencia();
 				cliques = 0;
 			}
-			else if (cliques % 20 == 0)
+			else if (cliques % 20 == 0) {
 				triggerTodasPiscando(false);
+			}
 		}
 
 		else if (avancarDeFase) {
@@ -207,15 +207,14 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Iniciar o jogo pelo temporizador, reinicializando o placar e iniciando uma sequencia
 	 */
-	private void iniciarJogo() {
+	private void iniciarJogada() {
 		temporizador.start();
 		triggerTodasPiscando(false);
 		jogoRodando = true;
 		jogoTerminado = false;
-		player1.getPlacar().reinicializar();
-		player1.getPlacar().proximaFase();
-		player2.getPlacar().reinicializar();
-		player2.getPlacar().proximaFase();
+		botaoIniciar.setVisible(jogoTerminado);
+		jogadores.get(indexJogadorAtual).getPlacar().reinicializar();
+		jogadores.get(indexJogadorAtual).getPlacar().proximaFase();
 		iniciarUmaSequencia();
 	}
 
@@ -223,8 +222,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	 * Iniciar um sequencia com o numero piscadas equivalente ao fase do jogador
 	 */
 	private void iniciarUmaSequencia() {
-		sequencia1 = new SequenciaDeCores(player1.getPlacar().getFase());
-		sequencia2 = new SequenciaDeCores(player2.getPlacar().getFase());
+		sequenciaAtual = new SequenciaDeCores(jogadores.get(indexJogadorAtual).getPlacar().getFase());
 		indiceDePadroesDoJogo = 0;
 		indiceDePadroesDoJogador = 0;
 		mostrarSequencia = true;
@@ -234,11 +232,11 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	 * Avance para o proximo elemento da sequencia
 	 */
 	private void avanceSequencia() {
-		if (indiceDePadroesDoJogo >= sequencia1.getTamanho()) {
+		if (indiceDePadroesDoJogo >= sequenciaAtual.getTamanho()) {
 			mostrarSequencia = false;
 			return;
 		}
-		cores[sequencia1.getIndice(indiceDePadroesDoJogo)].setPiscada(true);
+		cores[sequenciaAtual.getIndice(indiceDePadroesDoJogo)].setPiscada(true);
 		indiceDePadroesDoJogo++;
 	}
 
@@ -248,7 +246,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	 */
 	private void avancarDeFase() {
 		avancarDeFase = true;
-		player1.getPlacar().proximaFase();
+		jogadores.get(indexJogadorAtual).getPlacar().proximaFase();
 	}
 
 	/**
@@ -256,7 +254,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	 */
 	private void iniciarProximaFase() {
 		avancarDeFase = false;
-		sequencia1 = null;
+		sequenciaAtual = null;
 		iniciarUmaSequencia();
 	}
 
@@ -264,10 +262,13 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	 * jogo terminado, parar temporizador, mas manter placar
 	 * 
 	 */
-	private void JogoTerminado() {
+	private void finalizaJogo() {
 		alertaJogoTerminado(true);
 		jogoRodando = false;
 		jogoTerminado = true;
+		jogadorErrou = false;
+		botaoIniciar.setVisible(jogoTerminado);
+		indexJogadorAtual = 0;
 		temporizador.stop();
 	}
 
@@ -280,7 +281,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			cores[i].setJogoTerminado(bool);
 	}
 
-
 	/**
 	 *  Mudar o piscar das cores
 	 * @param bool  true se os quadrados devem estar piscando, do contrario, false
@@ -289,7 +289,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i< NUM_PADS; i++)
 			cores[i].setPiscada(bool);
 	}
-
 
 	/**
 	 * Listener class to the Main button
@@ -300,11 +299,10 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		public void actionPerformed(ActionEvent e) {
 			if (!jogoRodando) {
 				alertaJogoTerminado(false);
-				iniciarJogo();
+				iniciarJogada();
 			}
 		}
 	}
-
 
 	// Mouse Listeners:
 	@Override
@@ -316,15 +314,21 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			cores[indiceDaCorClicada].setPiscada(true);
 			repaint();
 			cliques = 0;
-			if (indiceDaCorClicada == sequencia1.getIndice(indiceDePadroesDoJogador)) {
-				player1.getPlacar().aumentarPontuacao();
+			if (indiceDaCorClicada == sequenciaAtual.getIndice(indiceDePadroesDoJogador)) {
+				jogadorErrou = false;
+				jogadores.get(indexJogadorAtual).getPlacar().aumentarPontuacao();
 				indiceDePadroesDoJogador++;
-				if (indiceDePadroesDoJogador >= sequencia1.getTamanho())
+				if (indiceDePadroesDoJogador >= sequenciaAtual.getTamanho()) {
 					avancarDeFase();
-			}
-			else
+				}
+			} else if (indexJogadorAtual + 1 < jogadores.size()) {
+				jogadorErrou = true;
+				indexJogadorAtual++;
+				cliques = 0;
+				iniciarJogada();
+			} else {
 				jogoTerminado = true;
-
+			}
 		}
 	}
 
