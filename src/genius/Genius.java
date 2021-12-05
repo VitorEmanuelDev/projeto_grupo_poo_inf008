@@ -139,13 +139,11 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		JFrame frame = new JFrame(NOME);
 		frame.setSize(LARGURA, ALTURA);
 		frame.getContentPane().setBackground(COR_FUNDO);   
-		/*
-		 * combobox para escolhe do numero de jogadores
-		 * 
-		 * https://www.javatpoint.com/java-jcombobox
-		 * 
-		 * 
-		 * */
+		/*String numeroJogadores[] = {"1","2","3","4"};        
+	    JComboBox comboBox = new JComboBox(numeroJogadores);    
+	    comboBox.setBounds(50, 50,90,20);    
+	    frame.add(comboBox);        
+	    frame.setLayout(manager);*/
 		frame.setVisible(true);
 		frame.add(this);
 		frame.addMouseListener(this);
