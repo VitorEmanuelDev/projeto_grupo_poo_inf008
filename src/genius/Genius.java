@@ -32,9 +32,11 @@ import java.util.List;
 public class Genius extends JPanel implements ActionListener, MouseListener {
 
 	private static Genius genius;//singleton?
-	private Campeonato campeonato;
+	private Campeonato campeonato = new Campeonato();;
 	private int tamanhoLista = 2;//teste hardcoded
-	private List<Jogador> jogadores;
+	private List<Jogador> jogadores = new ArrayList<Jogador>();
+	private List<JTextField> nomesJogadores = new ArrayList<JTextField>();
+	private List<JTextField> apelidosJogadores = new ArrayList<JTextField>();
 	private SequenciaDeCores sequenciaAtual;
 	private JButton botaoIniciar;
 	private JButton botaoInserirDados;
@@ -77,8 +79,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	public Genius() {
 		criarFrame();
 		criarBotaoPrincipal();
-		//placar = new Placar();
-		jogadores = new ArrayList<Jogador>();   
+		//placar = new Placar();  
 		//jogadores.add(new Jogador("player 1"));
 		//jogadores.add(new Jogador("player 2"));
 		cores = new QuadradosCores[NUM_PADS];
@@ -88,8 +89,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	private void criarEntradaDeDadosInicial() {
-
-		Campeonato campeonato = new Campeonato();		
+	
 		JFrame frame = new JFrame("Entrada inicial de dados");
 		JLabel labelCampeonato = new JLabel();
 		JTextField nomeCampeonato = new JTextField(15);
@@ -100,14 +100,10 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		labelCampeonato.setText("Nome do campeonato");
 		frame.add(labelCampeonato);
 		frame.add(nomeCampeonato);
-
-		if(nomeCampeonato.getText() != null && !nomeCampeonato.getText().isEmpty()) {
-			campeonato.setNome(nomeCampeonato.getText());			
-		}
 		
 		JLabel labelNumeroJogadores = new JLabel();
 		labelNumeroJogadores.setForeground(Color.WHITE);
-	
+
 		for(int i = 0; i < tamanhoLista; i++) {
 			Jogador jogador = new Jogador();
 			jogador.setPlacar(new Placar());
@@ -117,25 +113,21 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			JTextField fieldApelido = new JTextField(15);
 			labelNome.setForeground(Color.WHITE);
 			labelApelido.setForeground(Color.WHITE);
-
 			int display = i + 1;
 			labelNome.setText("Nome do jogador " + display);
 			frame.add(labelNome);
-			frame.add(fieldNome);			
-			if(fieldNome.getText() != null && !fieldNome.getText().isEmpty()) {
-				jogador.setNome(fieldNome.getText());
-			}
-
+			frame.add(fieldNome);	
 			labelApelido.setText("Apelido do jogador " + display);
 			frame.add(labelApelido);
-			frame.add(fieldApelido);		
-			if(fieldApelido.getText() != null && !fieldApelido.getText().isEmpty()) {
-				jogador.setApelido(fieldApelido.getText());
-			}
+			frame.add(fieldApelido);	
+
 			jogadores.add(jogador);
+			nomesJogadores.add(fieldNome);
+			apelidosJogadores.add(fieldApelido);
+			
 		}
-		//campeonato.setJogadores(jogadores);
-		criarBotaoInserirDados(frame);
+	
+		criarBotaoInserirDados(frame, nomeCampeonato);
 		frame.setLayout(new FlowLayout());
 		frame.setVisible(true);
 	}
@@ -147,12 +139,19 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		JFrame frame = new JFrame(NOME);
 		frame.setSize(LARGURA, ALTURA);
 		frame.getContentPane().setBackground(COR_FUNDO);   
+		/*
+		 * combobox para escolhe do numero de jogadores
+		 * 
+		 * https://www.javatpoint.com/java-jcombobox
+		 * 
+		 * 
+		 * */
 		frame.setVisible(true);
 		frame.add(this);
 		frame.addMouseListener(this);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
 	}
 
 	/**
@@ -175,14 +174,15 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Cria o botao para pop up de inserir dados
 	 * @param frame 
+	 * @param nomeCampeonato 
 	 */
-	private void criarBotaoInserirDados(JFrame frame) {
+	private void criarBotaoInserirDados(JFrame frame, JTextField nomeCampeonato) {
 		botaoInserirDados = new JButton("INICIAR");
 		botaoInserirDados.setBackground(Color.GREEN);
 		botaoInserirDados.setForeground(Color.BLACK);
 		botaoInserirDados.setFocusPainted(false);
 		botaoInserirDados.setFont(new Font("Comic", Font.BOLD, 10));
-		botaoInserirDados.addActionListener(new botaoInserirDadosListener());
+		botaoInserirDados.addActionListener(new botaoInserirDadosListener(nomeCampeonato, frame));
 		setLayout(null);
 		frame.add(botaoInserirDados);	
 	}
@@ -224,9 +224,12 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		g.setColor(Color.WHITE);
 		if (jogoRodando) {
 			g.setFont(new Font("Comic", Font.BOLD, 14));
-			g.drawString("Jogador: " + jogadores.get(indexJogadorAtual).getNome(), (LARGURA/2) - 60,  ESCPACO_PADS + ESPACO_PADS_OFFSET);
-			g.drawString("Fase:  " + jogadores.get(indexJogadorAtual).getPlacar().getFase(), (LARGURA/2) - 60,  ESCPACO_PADS + ESPACO_PADS_OFFSET + 20 );
-			g.drawString("Pontuacao:  " + jogadores.get(indexJogadorAtual).getPlacar().getPontuacao(), (LARGURA/2) - 60,  ESCPACO_PADS + ESPACO_PADS_OFFSET + 40);
+			System.out.println(campeonato.getNome());
+			System.out.println(campeonato.getJogadores().get(indexJogadorAtual));
+			System.out.println(campeonato.getJogadores().get(indexJogadorAtual).getNome());
+			g.drawString("Jogador: " + campeonato.getJogadores().get(indexJogadorAtual).getNome(), (LARGURA/2) - 60,  ESCPACO_PADS + ESPACO_PADS_OFFSET);
+			g.drawString("Fase:  " + campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getFase(), (LARGURA/2) - 60,  ESCPACO_PADS + ESPACO_PADS_OFFSET + 20 );
+			g.drawString("Pontuacao:  " + campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getPontuacao(), (LARGURA/2) - 60,  ESCPACO_PADS + ESPACO_PADS_OFFSET + 40);
 		}
 		// Texto durante o jogo
 		g.setFont(new Font("Comic", Font.BOLD, 20));
@@ -241,7 +244,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			}else {
 				indexJogadorErrou = indexJogadorAtual - 1;
 			}
-			g.drawString(jogadores.get(indexJogadorErrou).getNome() + " errou!!!", (LARGURA/2) - 80,  550);
+			g.drawString(campeonato.getJogadores().get(indexJogadorErrou).getNome() + " errou!!!", (LARGURA/2) - 80,  550);
 		}
 
 	}
@@ -296,8 +299,8 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		jogoRodando = true;
 		jogoTerminado = false;
 		botaoIniciar.setVisible(jogoTerminado);
-		jogadores.get(indexJogadorAtual).getPlacar().reinicializar();
-		jogadores.get(indexJogadorAtual).getPlacar().proximaFase();
+		campeonato.getJogadores().get(indexJogadorAtual).getPlacar().reinicializar();
+		campeonato.getJogadores().get(indexJogadorAtual).getPlacar().proximaFase();
 		iniciarUmaSequencia();
 	}
 
@@ -305,7 +308,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	 * Iniciar um sequencia com o numero piscadas equivalente ao fase do jogador
 	 */
 	private void iniciarUmaSequencia() {
-		sequenciaAtual = new SequenciaDeCores(jogadores.get(indexJogadorAtual).getPlacar().getFase());
+		sequenciaAtual = new SequenciaDeCores(campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getFase());
 		indiceDePadroesDoJogo = 0;
 		indiceDePadroesDoJogador = 0;
 		mostrarSequencia = true;
@@ -329,7 +332,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	 */
 	private void avancarDeFase() {
 		avancarDeFase = true;
-		jogadores.get(indexJogadorAtual).getPlacar().proximaFase();
+		campeonato.getJogadores().get(indexJogadorAtual).getPlacar().proximaFase();
 	}
 
 	/**
@@ -392,11 +395,49 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	 * Listener class to the Main button
 	 */
 	private class botaoInserirDadosListener implements ActionListener {
-		private botaoInserirDadosListener() {}
+		
+		JTextField nomeCampeonato;
+		JFrame frame;
+		
+		private botaoInserirDadosListener(JTextField nomeCampeonato, JFrame frame) {
+			 this.nomeCampeonato = nomeCampeonato;
+			 this.frame = frame;
+		}
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (!jogoRodando) {
+				
+				String nomeCampeonatoStr = nomeCampeonato.getText();
+				System.out.println("nome campeonato " + nomeCampeonatoStr);//test
+			
+				if(nomeCampeonatoStr != null && !nomeCampeonatoStr.isEmpty()) {
+					campeonato.setNome(nomeCampeonatoStr);		
+				}else {
+					campeonato.setNome("Desafio Genius");
+				}
+				
+				for(int i = 0; i < tamanhoLista; i++) {
+					
+					String nomeJogador = nomesJogadores.get(i).getText();
+					System.out.println("nome jogador " + nomeJogador);//test
+					int display = i + 1;
+					if(nomeJogador != null && !nomeJogador.isEmpty()) {
+						jogadores.get(i).setNome(nomeJogador);
+					}else {
+						jogadores.get(i).setNome("Player " + display);
+					}
+			
+					String apelidoJogador = apelidosJogadores.get(i).getText();
+					System.out.println("apelido jogador " + apelidoJogador);//test
+					if(apelidoJogador != null && !apelidoJogador.isEmpty()) {
+						jogadores.get(i).setApelido(apelidoJogador);
+					}else {
+						jogadores.get(i).setApelido(apelidoJogador);
+					}					
+				}
+				campeonato.setJogadores(jogadores);		
 				alertaJogoTerminado(false);
+				frame.setVisible(false);
 				iniciarJogada();
 			}
 		}
@@ -414,7 +455,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			cliques = 0;
 			if (indiceDaCorClicada == sequenciaAtual.getIndice(indiceDePadroesDoJogador)) {
 				jogadorErrou = false;
-				jogadores.get(indexJogadorAtual).getPlacar().aumentarPontuacao();
+				campeonato.getJogadores().get(indexJogadorAtual).getPlacar().aumentarPontuacao();
 				indiceDePadroesDoJogador++;
 				if (indiceDePadroesDoJogador >= sequenciaAtual.getTamanho()) {
 					avancarDeFase();

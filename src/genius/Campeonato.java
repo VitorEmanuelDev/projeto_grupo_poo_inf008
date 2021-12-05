@@ -5,10 +5,14 @@ import java.util.List;
 public class Campeonato {
 
 	private String nome;
-	//private List<Jogador> jogadores;
+	private List<Jogador> jogadores;
 
 	public Campeonato() {
-		nome = "Campeonato Generico";
+
+	}
+	
+	public Campeonato(String nome) {
+		this.nome = nome;
 	}
 
 	public String getNome() {
@@ -19,12 +23,12 @@ public class Campeonato {
 		this.nome = nome;
 	}
 
-	/*public List<Jogador> getJogadores() {
+	public List<Jogador> getJogadores() {
 		return jogadores;
 	}
 
 	public void setJogadores(List<Jogador> jogadores) {
 		this.jogadores = jogadores;
-	}*/
+	}
 	
 }
