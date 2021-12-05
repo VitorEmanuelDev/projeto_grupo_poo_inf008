@@ -2,12 +2,18 @@ package genius;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.Timer;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
@@ -25,10 +31,13 @@ import java.util.List;
  */
 public class Genius extends JPanel implements ActionListener, MouseListener {
 
-	private static Genius genius;
+	private static Genius genius;//singleton?
+	private Campeonato campeonato;
+	private int tamanhoLista = 2;//teste hardcoded
 	private List<Jogador> jogadores;
 	private SequenciaDeCores sequenciaAtual;
 	private JButton botaoIniciar;
+	private JButton botaoInserirDados;
 	private QuadradosCores[] cores;
 	private Timer temporizador;
 
@@ -68,15 +77,67 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	public Genius() {
 		criarFrame();
 		criarBotaoPrincipal();
-
 		//placar = new Placar();
-		jogadores = new ArrayList<Jogador>();
-		jogadores.add(new Jogador("player 1"));
-		jogadores.add(new Jogador("player 2"));
+		jogadores = new ArrayList<Jogador>();   
+		//jogadores.add(new Jogador("player 1"));
+		//jogadores.add(new Jogador("player 2"));
 		cores = new QuadradosCores[NUM_PADS];
 		temporizador = new Timer(TEMPORIZADOR_DELAY, this);
 		inicializarQuadradosDeCores();
 		repaint();
+	}
+
+	private void criarEntradaDeDadosInicial() {
+
+		Campeonato campeonato = new Campeonato();		
+		JFrame frame = new JFrame("Entrada inicial de dados");
+		JLabel labelCampeonato = new JLabel();
+		JTextField nomeCampeonato = new JTextField(15);
+		frame.setSize(400, 400);
+		frame.getContentPane().setBackground(COR_FUNDO);
+		frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
+		labelCampeonato.setForeground(Color.WHITE);
+		labelCampeonato.setText("Nome do campeonato");
+		frame.add(labelCampeonato);
+		frame.add(nomeCampeonato);
+
+		if(nomeCampeonato.getText() != null && !nomeCampeonato.getText().isEmpty()) {
+			campeonato.setNome(nomeCampeonato.getText());			
+		}
+		
+		JLabel labelNumeroJogadores = new JLabel();
+		labelNumeroJogadores.setForeground(Color.WHITE);
+	
+		for(int i = 0; i < tamanhoLista; i++) {
+			Jogador jogador = new Jogador();
+			jogador.setPlacar(new Placar());
+			JLabel labelNome = new JLabel();
+			JLabel labelApelido = new JLabel();
+			JTextField fieldNome = new JTextField(15);
+			JTextField fieldApelido = new JTextField(15);
+			labelNome.setForeground(Color.WHITE);
+			labelApelido.setForeground(Color.WHITE);
+
+			int display = i + 1;
+			labelNome.setText("Nome do jogador " + display);
+			frame.add(labelNome);
+			frame.add(fieldNome);			
+			if(fieldNome.getText() != null && !fieldNome.getText().isEmpty()) {
+				jogador.setNome(fieldNome.getText());
+			}
+
+			labelApelido.setText("Apelido do jogador " + display);
+			frame.add(labelApelido);
+			frame.add(fieldApelido);		
+			if(fieldApelido.getText() != null && !fieldApelido.getText().isEmpty()) {
+				jogador.setApelido(fieldApelido.getText());
+			}
+			jogadores.add(jogador);
+		}
+		//campeonato.setJogadores(jogadores);
+		criarBotaoInserirDados(frame);
+		frame.setLayout(new FlowLayout());
+		frame.setVisible(true);
 	}
 
 	/**
@@ -85,12 +146,13 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	private void criarFrame() {
 		JFrame frame = new JFrame(NOME);
 		frame.setSize(LARGURA, ALTURA);
-		frame.getContentPane().setBackground(COR_FUNDO);
+		frame.getContentPane().setBackground(COR_FUNDO);   
 		frame.setVisible(true);
 		frame.add(this);
 		frame.addMouseListener(this);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 	}
 
 	/**
@@ -105,9 +167,24 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		int offset_x = 250;
 		int offset_y = 292;
 		botaoIniciar.setBounds(offset_x, offset_y, LARGURA_BOTAO_PRINCIPAL, ALTURA_BOTAO_PRINCIPAL);
-		botaoIniciar.addActionListener(new MainButtonListener());
+		botaoIniciar.addActionListener(new botaoIniciarListener());
 		setLayout(null);
 		add(botaoIniciar);
+	}
+
+	/**
+	 * Cria o botao para pop up de inserir dados
+	 * @param frame 
+	 */
+	private void criarBotaoInserirDados(JFrame frame) {
+		botaoInserirDados = new JButton("INICIAR");
+		botaoInserirDados.setBackground(Color.GREEN);
+		botaoInserirDados.setForeground(Color.BLACK);
+		botaoInserirDados.setFocusPainted(false);
+		botaoInserirDados.setFont(new Font("Comic", Font.BOLD, 10));
+		botaoInserirDados.addActionListener(new botaoInserirDadosListener());
+		setLayout(null);
+		frame.add(botaoInserirDados);	
 	}
 
 	/**
@@ -157,7 +234,13 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			g.setColor(Color.RED);
 			// se indexJogadorAtual for 0 então significa que o ultimo jogador errou, nesse caso
 			// usamos o tamanho da lista de jogadores como base para pegar o index adequado
-			int indexJogadorErrou = (indexJogadorAtual == 0 ? jogadores.size() : indexJogadorAtual) - 1;
+			int indexJogadorErrou;
+
+			if(indexJogadorAtual == 0) {
+				indexJogadorErrou = jogadores.size() - 1;
+			}else {
+				indexJogadorErrou = indexJogadorAtual - 1;
+			}
 			g.drawString(jogadores.get(indexJogadorErrou).getNome() + " errou!!!", (LARGURA/2) - 80,  550);
 		}
 
@@ -293,8 +376,23 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Listener class to the Main button
 	 */
-	private class MainButtonListener implements ActionListener {
-		private MainButtonListener() {}
+	private class botaoIniciarListener implements ActionListener {
+		private botaoIniciarListener() {}
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (!jogoRodando) {
+				alertaJogoTerminado(false);
+				criarEntradaDeDadosInicial();
+				//iniciarJogada();
+			}
+		}
+	}
+
+	/**
+	 * Listener class to the Main button
+	 */
+	private class botaoInserirDadosListener implements ActionListener {
+		private botaoInserirDadosListener() {}
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (!jogoRodando) {

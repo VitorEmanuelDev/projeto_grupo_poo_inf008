@@ -4,6 +4,11 @@ public class Jogador {
 // TODO analisar possibilidade de uso do temporalizar aqui ou no placar
 	Placar placar;
 	String nome;
+	String apelido;
+	
+	public Jogador() {
+	
+	}
 
 	public Jogador(String nome) {
 		this.nome = nome;
@@ -26,5 +31,12 @@ public class Jogador {
 		this.nome = nome;
 	}
 
+	public String getApelido() {
+		return apelido;
+	}
+
+	public void setApelido(String apelido) {
+		this.apelido = apelido;
+	}
 
 }
