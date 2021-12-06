@@ -18,6 +18,8 @@ import java.awt.Font;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -89,7 +91,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	private void criarEntradaDeDadosInicial() {
-	
+
 		JFrame frame = new JFrame("Entrada inicial de dados");
 		JLabel labelCampeonato = new JLabel();
 		JTextField nomeCampeonato = new JTextField(15);
@@ -100,10 +102,18 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		labelCampeonato.setText("Nome do campeonato");
 		frame.add(labelCampeonato);
 		frame.add(nomeCampeonato);
-		
+
 		JLabel labelNumeroJogadores = new JLabel();
 		labelNumeroJogadores.setForeground(Color.WHITE);
 
+		String [] numeroJogadores = {"1","2","3","4"};        
+		JComboBox comboBox = new JComboBox(numeroJogadores); 
+		comboBox.setBounds(50,50,90,20);    
+		frame.add(comboBox);    
+
+		//frame.setLayout(manager);
+		//String selected = (String) comboBox.getSelectedItem();
+	
 		for(int i = 0; i < tamanhoLista; i++) {
 			Jogador jogador = new Jogador();
 			jogador.setPlacar(new Placar());
@@ -124,9 +134,9 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			jogadores.add(jogador);
 			nomesJogadores.add(fieldNome);
 			apelidosJogadores.add(fieldApelido);
-			
 		}
-	
+
+
 		criarBotaoInserirDados(frame, nomeCampeonato);
 		frame.setLayout(new FlowLayout());
 		frame.setVisible(true);
@@ -139,11 +149,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		JFrame frame = new JFrame(NOME);
 		frame.setSize(LARGURA, ALTURA);
 		frame.getContentPane().setBackground(COR_FUNDO);   
-		/*String numeroJogadores[] = {"1","2","3","4"};        
-	    JComboBox comboBox = new JComboBox(numeroJogadores);    
-	    comboBox.setBounds(50, 50,90,20);    
-	    frame.add(comboBox);        
-	    frame.setLayout(manager);*/
 		frame.setVisible(true);
 		frame.add(this);
 		frame.addMouseListener(this);
@@ -393,29 +398,29 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	 * Listener class to the Main button
 	 */
 	private class botaoInserirDadosListener implements ActionListener {
-		
+
 		JTextField nomeCampeonato;
 		JFrame frame;
-		
+
 		private botaoInserirDadosListener(JTextField nomeCampeonato, JFrame frame) {
-			 this.nomeCampeonato = nomeCampeonato;
-			 this.frame = frame;
+			this.nomeCampeonato = nomeCampeonato;
+			this.frame = frame;
 		}
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (!jogoRodando) {
-				
+
 				String nomeCampeonatoStr = nomeCampeonato.getText();
 				System.out.println("nome campeonato " + nomeCampeonatoStr);//test
-			
+
 				if(nomeCampeonatoStr != null && !nomeCampeonatoStr.isEmpty()) {
 					campeonato.setNome(nomeCampeonatoStr);		
 				}else {
 					campeonato.setNome("Desafio Genius");
 				}
-				
+
 				for(int i = 0; i < tamanhoLista; i++) {
-					
+
 					String nomeJogador = nomesJogadores.get(i).getText();
 					System.out.println("nome jogador " + nomeJogador);//test
 					int display = i + 1;
@@ -424,7 +429,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 					}else {
 						jogadores.get(i).setNome("Player " + display);
 					}
-			
+
 					String apelidoJogador = apelidosJogadores.get(i).getText();
 					System.out.println("apelido jogador " + apelidoJogador);//test
 					if(apelidoJogador != null && !apelidoJogador.isEmpty()) {
@@ -497,4 +502,5 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	public static void main(String[] args) {
 		genius = new Genius();
 	}
+
 }
