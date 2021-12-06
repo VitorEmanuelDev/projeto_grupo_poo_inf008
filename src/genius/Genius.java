@@ -12,6 +12,8 @@ import javax.swing.JComboBox;
 import javax.swing.Timer;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.applet.Applet;
+import java.applet.AudioClip;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -25,8 +27,16 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.IOException;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
 
 /**
  * Represents the game's flow and interface
@@ -44,6 +54,9 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	private JButton botaoInserirDados;
 	private QuadradosCores[] cores;
 	private Timer temporizador;
+	private Sons som = new Sons();
+	private AudioClip[] arraySonoro = {som.getAudioVerde(),som.getAudioVermelho(),som.getAudioAmarelo(),som.getAudioAzul()};
+
 
 	// CONSTANTES:
 	private static final String NOME = "Genius - Projeto POO!";
@@ -158,7 +171,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Cria o notao principal
+	 * Cria o botao principal
 	 */
 	private void criarBotaoPrincipal() {
 		botaoIniciar = new JButton("JOGAR");
@@ -172,6 +185,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		botaoIniciar.addActionListener(new botaoIniciarListener());
 		setLayout(null);
 		add(botaoIniciar);
+
 	}
 
 	/**
@@ -326,6 +340,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			return;
 		}
 		cores[sequenciaAtual.getIndice(indiceDePadroesDoJogo)].setPiscada(true);
+		arraySonoro[sequenciaAtual.getIndice(indiceDePadroesDoJogo)].play();
 		indiceDePadroesDoJogo++;
 	}
 
@@ -497,6 +512,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	public void mouseExited(MouseEvent e) {}
 	@Override
 	public void mouseClicked(MouseEvent e) {}
+
 
 	// Rodar jogo
 	public static void main(String[] args) {
