@@ -26,8 +26,7 @@ public class SequenciaDeCores {
 	 */
 	private void criarSequencia() {
 		for (int i = 0; i < tamanho; i++) {
-			sequencia[i] = random.nextInt(4);
-			
+			sequencia[i] = random.nextInt(4);	
 		}
 	}
 
