@@ -2,8 +2,11 @@ package genius;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.ComboBoxModel;
@@ -118,10 +121,10 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		JLabel labelNumeroJogadores = new JLabel();
 		labelNumeroJogadores.setForeground(Color.WHITE);
 
-		String [] numeroJogadores = {"1","2","3","4"};        
-		JComboBox comboBox = new JComboBox(numeroJogadores); 
-		comboBox.setBounds(50,50,90,20);    
-		frame.add(comboBox);    
+		//String [] numeroJogadores = {"1","2","3","4"};        
+		//JComboBox comboBox = new JComboBox(numeroJogadores); 
+		//comboBox.setBounds(50,50,90,20);    
+		//frame.add(comboBox);    
 
 		//frame.setLayout(manager);
 		//String selected = (String) comboBox.getSelectedItem();
@@ -154,6 +157,31 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		frame.setVisible(true);
 	}
 
+	private void criarRelatorioFinal() {
+		
+		JFrame frame = new JFrame("Relatório final");
+        String[] colunas = new String[] {
+            "Nome", "Apelido", "Pontuação"
+        };
+         
+        Object[][] dados = new Object[][] {
+            {campeonato.getJogadores().get(0).getNome(), campeonato.getJogadores().get(0).getApelido(),
+             campeonato.getJogadores().get(0).getPlacar().getPontuacao()},
+            {campeonato.getJogadores().get(1).getNome(), campeonato.getJogadores().get(1).getApelido(),
+             campeonato.getJogadores().get(1).getPlacar().getPontuacao()}        
+        }; 
+    
+        JTable tabela = new JTable(dados, colunas);
+            
+        frame.add(new JScrollPane(tabela));
+        frame.getContentPane().setBackground(Color.BLACK); 
+        frame.setSize(300, 100); 
+        frame.setTitle(campeonato.getNome());
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);       
+        frame.pack();
+        frame.setVisible(true);
+	}
+	
 	/**
 	 * Criar frame
 	 */
@@ -240,9 +268,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		g.setColor(Color.WHITE);
 		if (jogoRodando) {
 			g.setFont(new Font("Comic", Font.BOLD, 14));
-			System.out.println(campeonato.getNome());
-			System.out.println(campeonato.getJogadores().get(indexJogadorAtual));
-			System.out.println(campeonato.getJogadores().get(indexJogadorAtual).getNome());
 			g.drawString("Jogador: " + campeonato.getJogadores().get(indexJogadorAtual).getNome(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
 			g.drawString("Fase:  " + campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getFase(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 20 );
 			g.drawString("Pontuacao:  " + campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getPontuacao(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 40);
@@ -484,6 +509,13 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 				iniciarJogada();
 			} else {
 				jogoTerminado = true;
+				
+				SwingUtilities.invokeLater(new Runnable() {
+		            @Override
+		            public void run() {
+		            	criarRelatorioFinal();
+		            }
+		        });
 			}
 		}
 	}
@@ -506,7 +538,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	@Override
 	public void mouseReleased(MouseEvent e) {}
 	@Override
-	public void mouseEntered(MouseEvent e) {}
+	public void mouseEntered(MouseEvent e) {}	 
 	@Override
 	public void mouseExited(MouseEvent e) {}
 	@Override
