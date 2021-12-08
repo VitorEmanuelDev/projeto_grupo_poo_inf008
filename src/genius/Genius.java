@@ -176,7 +176,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
         frame.add(new JScrollPane(tabela));
         frame.getContentPane().setBackground(Color.BLACK); 
         frame.setSize(300, 100); 
-        frame.setTitle(campeonato.getNome());
+        frame.setTitle(campeonato.getNome() + " - " + java.time.LocalDate.now());
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);       
         frame.pack();
         frame.setVisible(true);
@@ -543,7 +543,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	public void mouseExited(MouseEvent e) {}
 	@Override
 	public void mouseClicked(MouseEvent e) {}
-
 
 	// Rodar jogo
 	public static void main(String[] args) {
