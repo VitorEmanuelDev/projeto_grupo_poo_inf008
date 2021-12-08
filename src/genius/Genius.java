@@ -6,6 +6,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -82,8 +83,8 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	private boolean avancarDeFase = false;
 	private boolean mostrarSequencia = false;
 	private int cliques = 0;
-	private int indiceDeQUADRADOroesDoJogador;
-	private int indiceDeQUADRADOroesDoJogo;
+	private int indiceDePadroesDoJogador;
+	private int indiceDePadroesDoJogo;
 	private int indexJogadorAtual = 0;
 
 
@@ -118,14 +119,14 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		JLabel labelNumeroJogadores = new JLabel();
 		labelNumeroJogadores.setForeground(Color.WHITE);
 
-		String [] numeroJogadores = {"1","2","3","4"};        
-		JComboBox comboBox = new JComboBox(numeroJogadores); 
-		comboBox.setBounds(50,50,90,20);    
-		frame.add(comboBox);    
+		//String [] numeroJogadores = {"1","2","3","4"};        
+		//JComboBox comboBox = new JComboBox(numeroJogadores); 
+		//comboBox.setBounds(50,50,90,20);    
+		//frame.add(comboBox);    
 
 		//frame.setLayout(manager);
 		//String selected = (String) comboBox.getSelectedItem();
-	
+
 		for(int i = 0; i < tamanhoLista; i++) {
 			Jogador jogador = new Jogador();
 			jogador.setPlacar(new Placar());
@@ -240,10 +241,8 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		g.setColor(Color.WHITE);
 		if (jogoRodando) {
 			g.setFont(new Font("Comic", Font.BOLD, 14));
-			System.out.println(campeonato.getNome());
-			System.out.println(campeonato.getJogadores().get(indexJogadorAtual));
-			System.out.println(campeonato.getJogadores().get(indexJogadorAtual).getNome());
-			g.drawString("Jogador: " + campeonato.getJogadores().get(indexJogadorAtual).getNome(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
+			int display = indexJogadorAtual + 1;		
+			g.drawString("Jogador " + display + ": " + campeonato.getJogadores().get(indexJogadorAtual).getNome(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
 			g.drawString("Fase:  " + campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getFase(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 20 );
 			g.drawString("Pontuacao:  " + campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getPontuacao(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 40);
 		}
@@ -321,12 +320,26 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
+	 * Continuar o jogo pelo temporizador e iniciando uma sequencia para desempate
+	 */
+	private void reiniciarJogadaParaDesempate() {
+		indexJogadorAtual = 0;
+		temporizador.start();
+		triggerTodasPiscando(false);
+		jogoRodando = true;
+		jogoTerminado = false;
+		botaoIniciar.setVisible(jogoTerminado);	
+		campeonato.getJogadores().get(indexJogadorAtual).getPlacar().proximaFase();
+		iniciarUmaSequencia();
+	}
+
+	/**
 	 * Iniciar um sequencia com o numero piscadas equivalente ao fase do jogador
 	 */
 	private void iniciarUmaSequencia() {
 		sequenciaAtual = new SequenciaDeCores(campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getFase());
-		indiceDeQUADRADOroesDoJogo = 0;
-		indiceDeQUADRADOroesDoJogador = 0;
+		indiceDePadroesDoJogo = 0;
+		indiceDePadroesDoJogador = 0;
 		mostrarSequencia = true;
 	}
 
@@ -334,13 +347,13 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	 * Avance para o proximo elemento da sequencia
 	 */
 	private void avanceSequencia() {
-		if (indiceDeQUADRADOroesDoJogo >= sequenciaAtual.getTamanho()) {
+		if (indiceDePadroesDoJogo >= sequenciaAtual.getTamanho()) {
 			mostrarSequencia = false;
 			return;
 		}
-		cores[sequenciaAtual.getIndice(indiceDeQUADRADOroesDoJogo)].setPiscada(true);
-		arraySonoro[sequenciaAtual.getIndice(indiceDeQUADRADOroesDoJogo)].play();
-		indiceDeQUADRADOroesDoJogo++;
+		cores[sequenciaAtual.getIndice(indiceDePadroesDoJogo)].setPiscada(true);
+		arraySonoro[sequenciaAtual.getIndice(indiceDePadroesDoJogo)].play();
+		indiceDePadroesDoJogo++;
 	}
 
 	/**
@@ -470,11 +483,11 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			cores[indiceDaCorClicada].setPiscada(true);
 			repaint();
 			cliques = 0;
-			if (indiceDaCorClicada == sequenciaAtual.getIndice(indiceDeQUADRADOroesDoJogador)) {
+			if (indiceDaCorClicada == sequenciaAtual.getIndice(indiceDePadroesDoJogador)) {
 				jogadorErrou = false;
 				campeonato.getJogadores().get(indexJogadorAtual).getPlacar().aumentarPontuacao();
-				indiceDeQUADRADOroesDoJogador++;
-				if (indiceDeQUADRADOroesDoJogador >= sequenciaAtual.getTamanho()) {
+				indiceDePadroesDoJogador++;
+				if (indiceDePadroesDoJogador >= sequenciaAtual.getTamanho()) {
 					avancarDeFase();
 				}
 			} else if (indexJogadorAtual + 1 < jogadores.size()) {
@@ -483,7 +496,23 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 				cliques = 0;
 				iniciarJogada();
 			} else {
-				jogoTerminado = true;
+				boolean empate = false;
+				if(campeonato.getJogadores().get(0).getPlacar().getPontuacao() 
+						== campeonato.getJogadores().get(1).getPlacar().getPontuacao()) {
+					empate = true;
+				}
+
+				if(empate == true) {
+					int input = JOptionPane.showConfirmDialog(null, 
+							"Continuar jogo em fase extra.", "Ocorreu um empate!!!", JOptionPane.DEFAULT_OPTION);
+					System.out.println(input);
+					if(input == 0) {
+						//iniciarJogada();
+						reiniciarJogadaParaDesempate();
+					}
+				}else {
+					jogoTerminado = true;
+				}
 			}
 		}
 	}

@@ -10,11 +10,9 @@ public class Placar {
     private int fase;
     private int pontuacao;
     private Random random;
-    private static final int BONUS_DE_PASSAGEM_DE_NIVEL = 1500;
-    private static final int PONTUACAO_MINIMA = 100;
 
     /**
-     * Contrutor cria um novo placar
+     * Construtor cria um novo placar
      */
     public Placar() {
         fase = 0;
@@ -35,15 +33,15 @@ public class Placar {
      */
     public void proximaFase() {
         fase++;
-        if (fase != 1)
-            pontuacao += fase * BONUS_DE_PASSAGEM_DE_NIVEL;
+        if(fase != 1)
+            pontuacao += fase;
     }
 
     /**
      * Aumenta a pontuacao de acordo com o nivel
      */
     public void aumentarPontuacao() {
-        pontuacao += fase * (PONTUACAO_MINIMA + random.nextInt(10));
+        pontuacao += fase * 10;
     }
 
     /**
