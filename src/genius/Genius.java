@@ -51,12 +51,13 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	private List<JTextField> apelidosJogadores = new ArrayList<JTextField>();
 	private SequenciaDeCores sequenciaAtual;
 	private JButton botaoIniciar;
+	private JButton botaoPause;
 	private JButton botaoInserirDados;
 	private QuadradosCores[] cores;
 	private Timer temporizador;
 	private Sons som = new Sons();
 	private AudioClip[] arraySonoro = {som.getAudioVerde(),som.getAudioVermelho(),som.getAudioAmarelo(),som.getAudioAzul()};
-
+    
 
 	// CONSTANTES:
 	private static final String NOME = "Genius - Projeto POO!";
@@ -93,6 +94,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	public Genius() {
 		criarFrame();
 		criarBotaoPrincipal();
+		botaoPause();
 		//placar = new Placar();  
 		//jogadores.add(new Jogador("player 1"));
 		//jogadores.add(new Jogador("player 2"));
@@ -185,6 +187,40 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		setLayout(null);
 		add(botaoIniciar);
 
+	}
+	
+	private void botaoPause() { // botao pause
+		botaoPause = new JButton("PAUSE");
+		botaoPause.setBackground(Color.GREEN);
+		botaoPause.setForeground(Color.BLACK);
+		botaoPause.setFocusPainted(false);
+		botaoPause.setFont(new Font("Comic", Font.BOLD, 10));
+		int offset_x = 250; // posicao ok
+		int offset_y = 292; // posicao ok
+		botaoPause.setBounds(offset_x, offset_y, LARGURA_BOTAO_PRINCIPAL, ALTURA_BOTAO_PRINCIPAL);
+		botaoPause.addActionListener(new botaoPauseListener());
+		setLayout(null);
+		add(botaoPause);
+	}
+	
+	private class botaoPauseListener implements ActionListener {
+		private botaoPauseListener() {}
+		public void actionPerformed(ActionEvent e) {
+			if (jogoRodando) { // aparece durante o jogo 
+				alertaJogoTerminado(false);
+				pararJogada();
+			}
+		}
+	}
+	
+	private void pararJogada() {
+		temporizador.stop();
+		triggerTodasPiscando(false);
+		jogoRodando = false;
+		jogoTerminado = true;
+		botaoPause.setVisible(jogoTerminado);
+		campeonato.getJogadores().get(indexJogadorAtual).getPlacar().reinicializar();
+		campeonato.getJogadores().get(indexJogadorAtual).getPlacar().proximaFase();
 	}
 
 	/**
@@ -371,6 +407,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		jogoTerminado = true;
 		jogadorErrou = false;
 		botaoIniciar.setVisible(jogoTerminado);
+		botaoPause.setVisible(jogoRodando);
 		indexJogadorAtual = 0;
 		temporizador.stop();
 	}
@@ -407,6 +444,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 	}
+	
 
 	/**
 	 * Listener class to the Main button
