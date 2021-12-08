@@ -159,30 +159,30 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	private void criarRelatorioFinal() {
-		
+
 		JFrame frame = new JFrame("Relatório final");
-        String[] colunas = new String[] {
-            "Nome", "Apelido", "Pontuação"
-        };
-         
-        Object[][] dados = new Object[][] {
-            {campeonato.getJogadores().get(0).getNome(), campeonato.getJogadores().get(0).getApelido(),
-             campeonato.getJogadores().get(0).getPlacar().getPontuacao()},
-            {campeonato.getJogadores().get(1).getNome(), campeonato.getJogadores().get(1).getApelido(),
-             campeonato.getJogadores().get(1).getPlacar().getPontuacao()}        
-        }; 
-    
-        JTable tabela = new JTable(dados, colunas);
-            
-        frame.add(new JScrollPane(tabela));
-        frame.getContentPane().setBackground(Color.BLACK); 
-        frame.setSize(300, 100); 
-        frame.setTitle(campeonato.getNome() + " - " + java.time.LocalDate.now());
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);       
-        frame.pack();
-        frame.setVisible(true);
+		String[] colunas = new String[] {
+				"Nome", "Apelido", "Pontuação"
+		};
+
+		Object[][] dados = new Object[][] {
+			{campeonato.getJogadores().get(0).getNome(), campeonato.getJogadores().get(0).getApelido(),
+				campeonato.getJogadores().get(0).getPlacar().getPontuacao()},
+			{campeonato.getJogadores().get(1).getNome(), campeonato.getJogadores().get(1).getApelido(),
+					campeonato.getJogadores().get(1).getPlacar().getPontuacao()}        
+		}; 
+
+		JTable tabela = new JTable(dados, colunas);
+
+		frame.add(new JScrollPane(tabela));
+		frame.getContentPane().setBackground(Color.BLACK); 
+		frame.setSize(300, 100); 
+		frame.setTitle(campeonato.getNome() + " - " + java.time.LocalDate.now());
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);       
+		frame.pack();
+		frame.setVisible(true);
 	}
-	
+
 	/**
 	 * Criar frame
 	 */
@@ -541,17 +541,18 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 					}
 				}else {
 					jogoTerminado = true;
-          
-				SwingUtilities.invokeLater(new Runnable() {
-		            @Override
-		            public void run() {
-		            	criarRelatorioFinal();
-		            }
-		        });
+
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							criarRelatorioFinal();
+						}
+					});
+				}
+
 			}
 		}
 	}
-
 	/**
 	 * Pega o indice do quadrado colorido dentro de uma dada coordenada
 	 * @param x     x coordinate
