@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Genius extends JPanel implements ActionListener, MouseListener, Runnable{
+public class Genius extends JPanel implements ActionListener, MouseListener{
 
 	/**
 	 * 
@@ -66,8 +66,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener, Run
 	// Rodar jogo
 	public static void main(String[] args) throws InterruptedException{
 		genius = new Genius();
-		Thread t1 = new Thread(genius, "T1");
-		t1.start();
+	
 	}
 
 
@@ -182,7 +181,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener, Run
 		tabela.getAutoResizeMode();
 		JFrame frame = new JFrame("Resultados do " + campeonato.getNome() + " - " + java.time.LocalDate.now());
 		//frame.setSize(200, 50);
-		//frame.getContentPane().setBackground(COR_FUNDO);   
+		//frame.getContentPane().setBackground(COR_FUNDO);  //cor e tamanhho precisam ser modificados 
 		frame.setResizable(true);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		JScrollPane jspane = new JScrollPane(tabela);
@@ -228,7 +227,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener, Run
 	}
 
 	/**
-	 * Cria o botao principal
+	 * Cria o botao pause
 	 */
 	private void criarBotaoPause() {
 		botaoPause = new JButton("PAUSE");
@@ -366,10 +365,11 @@ public class Genius extends JPanel implements ActionListener, MouseListener, Run
 	 */
 	private void iniciarJogada() {
 		temporizador.start();
-
 		triggerTodasPiscando(false);
 		jogoRodando = true;
 		jogoTerminado = false;
+		jogoPausado = false;
+		botaoPause.setVisible(jogoPausado);
 		botaoIniciar.setVisible(jogoTerminado);
 		campeonato.getJogadores().get(indexJogadorAtual).getPlacar().setTempoInicioJogada(Instant.now());
 		campeonato.getJogadores().get(indexJogadorAtual).getPlacar().reinicializar();
@@ -397,6 +397,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener, Run
 		jogoTerminado = false;
 		botaoIniciar.setVisible(jogoTerminado);	
 		campeonato.getJogadores().get(indexJogadorAtual).getPlacar().proximaFase();
+		campeonato.getJogadores().get(indexJogadorAtual).getPlacar().setTempoInicioJogada(Instant.now());
 		iniciarUmaSequencia();
 	}
 
@@ -502,7 +503,16 @@ public class Genius extends JPanel implements ActionListener, MouseListener, Run
 		private botaoPausarListener() {}
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			run();
+			if (jogoPausado == true) {
+				alertaJogoTerminado(false);			
+			
+				int input = JOptionPane.showConfirmDialog(null, 
+						"Deseja continuar a jogada?", "Pause", JOptionPane.DEFAULT_OPTION);
+				System.out.println(input);
+				if(input == 0) {
+					jogoPausado = false;
+				}
+			}
 		}
 
 	}
@@ -635,28 +645,5 @@ public class Genius extends JPanel implements ActionListener, MouseListener, Run
 	@Override
 	public void mouseClicked(MouseEvent e) {}
 
-
-	@Override
-	public void run() {
-		manipularThreadPause();
-	}
-
-
-	private void manipularThreadPause() {
-		while (jogoPausado == true) {
-			alertaJogoTerminado(false);			
-			try {
-				Thread.sleep(200); 
-			} catch (InterruptedException ie) {
-				ie.printStackTrace(); 
-			}
-			int input = JOptionPane.showConfirmDialog(null, 
-					"Deseja continuar a jogada?", "Pause", JOptionPane.DEFAULT_OPTION);
-			System.out.println(input);
-			if(input == 0) {
-				jogoPausado = false;
-			}
-		}
-	}
 
 }
