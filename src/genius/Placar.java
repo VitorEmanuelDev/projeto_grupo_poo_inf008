@@ -9,7 +9,6 @@ public class Placar {
 	
     private int fase;
     private int pontuacao;
-    private Random random;
 
     /**
      * Construtor cria um novo placar
@@ -17,7 +16,6 @@ public class Placar {
     public Placar() {
         fase = 0;
         pontuacao = 0;
-        random = new Random();
     }
 
     /**
