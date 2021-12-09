@@ -506,12 +506,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 			if (jogoPausado == true) {
 				alertaJogoTerminado(false);			
 			
-				int input = JOptionPane.showConfirmDialog(null, 
-						"Deseja continuar a jogada?", "Pause", JOptionPane.DEFAULT_OPTION);
-				System.out.println(input);
-				if(input == 0) {
-					jogoPausado = false;
-				}
 			}
 		}
 
