@@ -56,6 +56,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	private SequenciaDeCores sequenciaAtual;
 	private JButton botaoIniciar;
 	private JButton botaoInserirDados;
+	private JComboBox<String> comboBoxDificuldade;
 	private QuadradosCores[] cores;
 	private Timer temporizador;
 	private Sons som = new Sons();
@@ -122,6 +123,12 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		JLabel labelNumeroJogadores = new JLabel();
 		labelNumeroJogadores.setForeground(Color.WHITE);
 
+		JLabel labelDificuldade = new JLabel("Escolha a dificuldade:");
+		String [] dificuldades = {"fácil","médio","difícil"};        
+		comboBoxDificuldade = new JComboBox<String>(dificuldades);
+		comboBoxDificuldade.setBounds(50,50,90,20);
+		frame.add(labelDificuldade);
+		frame.add(comboBoxDificuldade);
 		//String [] numeroJogadores = {"1","2","3","4"};        
 		//JComboBox comboBox = new JComboBox(numeroJogadores); 
 		//comboBox.setBounds(50,50,90,20);    
@@ -365,7 +372,13 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	 * Iniciar um sequencia com o numero piscadas equivalente ao fase do jogador
 	 */
 	private void iniciarUmaSequencia() {
-		sequenciaAtual = new SequenciaDeCores(campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getFase());
+		int numeroSequencias = campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getFase();
+		if (comboBoxDificuldade.getSelectedIndex() == 1) {
+			numeroSequencias += 2;
+		} else if (comboBoxDificuldade.getSelectedIndex() == 2) {
+			numeroSequencias += 4;
+		}
+		sequenciaAtual = new SequenciaDeCores(numeroSequencias);
 		indiceDePadroesDoJogo = 0;
 		indiceDePadroesDoJogador = 0;
 		mostrarSequencia = true;
