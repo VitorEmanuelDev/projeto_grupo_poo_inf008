@@ -2,7 +2,6 @@ package genius;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * Representa o placar
