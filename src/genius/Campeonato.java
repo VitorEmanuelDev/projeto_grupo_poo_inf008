@@ -1,5 +1,6 @@
 package genius;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Campeonato {
@@ -8,7 +9,7 @@ public class Campeonato {
 	private List<Jogador> jogadores;
 
 	public Campeonato() {
-
+		this.jogadores = new ArrayList<Jogador>();
 	}
 	
 	public Campeonato(String nome) {

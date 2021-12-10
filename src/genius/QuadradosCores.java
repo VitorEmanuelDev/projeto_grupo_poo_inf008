@@ -3,6 +3,7 @@ package genius;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+// mudar nome das variaveis
 /**
  * Representa um quadradona GUI do jogo
  */

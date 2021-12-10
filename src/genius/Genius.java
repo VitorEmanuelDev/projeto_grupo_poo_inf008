@@ -17,9 +17,8 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	 */
 	private static final long serialVersionUID = 1L;
 	private static Genius genius;//singleton?
-	private Campeonato campeonato = new Campeonato();;
+	private Campeonato campeonato;
 	private int tamanhoLista = 2;//teste hardcoded
-	private List<Jogador> jogadores = new ArrayList<Jogador>();
 	private List<JTextField> nomesJogadores = new ArrayList<JTextField>();
 	private List<JTextField> apelidosJogadores = new ArrayList<JTextField>();
 	private SequenciaDeCores sequenciaAtual;
@@ -77,8 +76,8 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		criarBotaoPrincipal();
 		criarBotaoPause();
 		//placar = new Placar();  
-		//jogadores.add(new Jogador("player 1"));
-		//jogadores.add(new Jogador("player 2"));
+		//campeonato.getJogadores().add(new Jogador("player 1"));
+		//campeonato.getJogadores().add(new Jogador("player 2"));
 		cores = new QuadradosCores[NUM_QUADRADOS];
 		temporizador = new Timer(TEMPORIZADOR_DELAY, this);
 		inicializarQuadradosDeCores();
@@ -86,7 +85,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	}
 
 	private void criarEntradaDeDadosInicial() {
-
+		campeonato = new Campeonato();
 		JFrame frame = new JFrame("Entrada inicial de dados");
 		JLabel labelCampeonato = new JLabel();
 		JTextField nomeCampeonato = new JTextField(15);
@@ -132,7 +131,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 			frame.add(labelApelido);
 			frame.add(fieldApelido);	
 
-			jogadores.add(jogador);
+			campeonato.getJogadores().add(jogador);
 			nomesJogadores.add(fieldNome);
 			apelidosJogadores.add(fieldApelido);
 		}
@@ -228,7 +227,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		botaoIniciar.addActionListener(new botaoIniciarListener());
 		setLayout(null);
 		add(botaoIniciar);
-
 	}
 
 	/**
@@ -300,7 +298,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		g.setColor(Color.WHITE);
 		if (jogoRodando) {
 			g.setFont(new Font("Comic", Font.BOLD, 14));
-			int display = indexJogadorAtual + 1;		
+			int display = indexJogadorAtual + 1;
 			g.drawString("Jogador " + display + ": " + campeonato.getJogadores().get(indexJogadorAtual).getNome(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
 			g.drawString("Fase:  " + campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getFase(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 20 );
 			g.drawString("Pontuacao:  " + campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getPontuacao(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 40);
@@ -310,11 +308,11 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		if (jogoTerminado || jogadorErrou) {
 			g.setColor(Color.RED);
 			// se indexJogadorAtual for 0 então significa que o ultimo jogador errou, nesse caso
-			// usamos o tamanho da lista de jogadores como base para pegar o index adequado
+			// usamos o tamanho da lista de campeonato.getJogadores() como base para pegar o index adequado
 			int indexJogadorErrou;
 
 			if(indexJogadorAtual == 0) {
-				indexJogadorErrou = jogadores.size() - 1;
+				indexJogadorErrou = campeonato.getJogadores().size() - 1;
 			}else {
 				indexJogadorErrou = indexJogadorAtual - 1;
 			}
@@ -463,6 +461,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	 * @param bool true se o jogo tiver terminado ou falso, caso contrario
 	 */
 	private void alertaJogoTerminado(boolean bool) {
+		jogoTerminado = bool;
 		for (int i = 0; i < NUM_QUADRADOS; i++)
 			cores[i].setJogoTerminado(bool);
 	}
@@ -540,20 +539,20 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 					System.out.println("nome jogador " + nomeJogador);//test
 					int display = i + 1;
 					if(nomeJogador != null && !nomeJogador.isEmpty()) {
-						jogadores.get(i).setNome(nomeJogador);
+						campeonato.getJogadores().get(i).setNome(nomeJogador);
 					}else {
-						jogadores.get(i).setNome("Player " + display);
+						campeonato.getJogadores().get(i).setNome("Player " + display);
 					}
 
 					String apelidoJogador = apelidosJogadores.get(i).getText();
 					System.out.println("apelido jogador " + apelidoJogador);//test
 					if(apelidoJogador != null && !apelidoJogador.isEmpty()) {
-						jogadores.get(i).setApelido(apelidoJogador);
+						campeonato.getJogadores().get(i).setApelido(apelidoJogador);
 					}else {
-						jogadores.get(i).setApelido(apelidoJogador);
+						campeonato.getJogadores().get(i).setApelido(apelidoJogador);
 					}					
 				}
-				campeonato.setJogadores(jogadores);		
+				campeonato.setJogadores(campeonato.getJogadores());		
 				alertaJogoTerminado(false);
 				frame.setVisible(false);
 				iniciarJogada();
@@ -578,7 +577,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 				if (indiceDePadroesDoJogador >= sequenciaAtual.getTamanho()) {
 					avancarDeFase();
 				}
-			} else if (indexJogadorAtual + 1 < jogadores.size()) {
+			} else if (indexJogadorAtual + 1 < campeonato.getJogadores().size()) {
 				jogadorErrou = true;
 				indexJogadorAtual++;
 				cliques = 0;
