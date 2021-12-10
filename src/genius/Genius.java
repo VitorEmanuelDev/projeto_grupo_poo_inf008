@@ -374,7 +374,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		botaoPause.setVisible(jogoRodando);
 		botaoIniciar.setVisible(jogoTerminado);
 		campeonato.getJogadores().get(indexJogadorAtual).getPlacar().setTempoInicioJogada(Instant.now());
-		campeonato.getJogadores().get(indexJogadorAtual).getPlacar().reinicializar();
 		campeonato.getJogadores().get(indexJogadorAtual).getPlacar().proximaFase();	
 		iniciarUmaSequencia();
 	}
@@ -383,19 +382,17 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	 * Continuar o jogo pelo temporizador e iniciando uma sequencia para desempate
 	 */
 	private void reiniciarJogadaParaDesempate() {
-		indexJogadorAtual = 0;
 		temporizador.start();
 		triggerTodasPiscando(false);
 		jogoRodando = true;
 		jogoTerminado = false;
-		botaoIniciar.setVisible(jogoTerminado);	
 		campeonato.getJogadores().get(indexJogadorAtual).getPlacar().proximaFase();
 		campeonato.getJogadores().get(indexJogadorAtual).getPlacar().setTempoInicioJogada(Instant.now());
 		iniciarUmaSequencia();
 	}
 
 	/**
-	 * Iniciar um sequencia com o numero piscadas equivalente ao fase do jogador
+	 * Iniciar um sequencia com o numero piscadas equivalente a fase do jogador
 	 */
 	private void iniciarUmaSequencia() {
 		int numeroSequencias = campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getFase();
@@ -594,15 +591,16 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 					empate = true;
 				}
 
-				if(empate == true) {
+				if(empate) {
 					int input = JOptionPane.showConfirmDialog(null, 
 							"Continuar jogo em fase extra.", "Ocorreu um empate!!!", JOptionPane.DEFAULT_OPTION);
 					System.out.println(input);
 					if(input == 0) {
 						//iniciarJogada();
+						indexJogadorAtual = 0;
 						reiniciarJogadaParaDesempate();
 					}
-				}else {
+				} else {
 					jogoTerminado = true;
 
 					SwingUtilities.invokeLater(new Runnable() {
