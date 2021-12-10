@@ -28,6 +28,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	private JComboBox<String> comboBoxDificuldade;
 	private QuadradosCores[] cores;
 	private Timer temporizador;
+	private Long instantePrePausa = (long) 0;
 	private Sons som = new Sons();
 
 	private AudioClip[] arraySonoro = {som.getAudioVerde(),som.getAudioVermelho(),som.getAudioAmarelo(),som.getAudioAzul()};
@@ -428,8 +429,10 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		campeonato.getJogadores().get(indexJogadorAtual).getPlacar().setTempoFimJogada(Instant.now());	      
 		Instant tempoInicioJogada = campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getTempoInicioJogada();
 		Instant tempoFimJogada = campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getTempoFimJogada();
-		Long timeElapsed = Duration.between(tempoInicioJogada, tempoFimJogada).getSeconds();
-		campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getTempoDaJogada().add(timeElapsed);
+		Long tempoDeJogada = Duration.between(tempoInicioJogada, tempoFimJogada).getSeconds();
+		//tempoDeJogada = tempoDeJogada + instantePrePausa;
+		campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getTempoDaJogada().add(tempoDeJogada);
+		instantePrePausa = (long) 0;
 	}
 
 	/**
@@ -500,7 +503,11 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 			if (!jogoRodando) {
 				botaoPause.setText("PAUSAR");
 			} else {
-				botaoPause.setText("CONTINUAR");
+				campeonato.getJogadores().get(indexJogadorAtual).getPlacar().setTempoFimJogada(Instant.now());
+				Instant momentoPause = campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getTempoFimJogada();
+				Instant antesPause = campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getTempoInicioJogada();
+				instantePrePausa = Duration.between(antesPause, momentoPause).getSeconds();
+				botaoPause.setText("CONTINUAR");	
 			}
 			jogoRodando = !jogoRodando;
 		}
