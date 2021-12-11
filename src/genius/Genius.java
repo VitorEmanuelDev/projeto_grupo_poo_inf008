@@ -137,7 +137,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	}
 
 	private void criarRelatorioFinal() {
-		
+
 		Long jogadaMaisRapida = Long.MAX_VALUE;
 
 		Long [] listaJogadaMaisRapida = new Long[tamanhoLista];
@@ -206,10 +206,31 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		Integer[] options = {1, 2, 3, 4};
+		Integer[] options = {1, 2, 3, 4, 5, 6, 7 ,8};
 		tamanhoLista = (Integer)JOptionPane.showInputDialog(null, "Escolha o número de jogadores:", 
 				"Jogadores", JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+
+		/*String numeroJogadores = JOptionPane.showInputDialog(frame, "Quantos jogadores?", 1);
+
+		char [] numeroJogadoresChar = numeroJogadores.toCharArray();
+
+		for(int i = 0; i < numeroJogadoresChar.length; i++) {
+
+			if(numeroJogadoresChar[i] < 48 || numeroJogadoresChar[i] > 57) {		
+				numeroJogadores = "1";
+				break;		
+			}
+
+		}
+
+		if(numeroJogadores != null && !numeroJogadores.isEmpty()){
+			tamanhoLista = Integer.parseInt(numeroJogadores);
+		}else {
+			tamanhoLista = 1;
+		}*/
 	}
+
+
 
 	/**
 	 * Cria o botao principal
@@ -311,7 +332,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 			int indexJogadorErrou;
 
 			if(indexJogadorAtual == 0) {
-				indexJogadorErrou = 1;
+				indexJogadorErrou = campeonato.getJogadores().size() - 1;
 			}else {
 				indexJogadorErrou = indexJogadorAtual - 1;
 			}
