@@ -8,8 +8,9 @@ import java.util.ArrayList;
  */
 public class Placar {
 
-	private int fase;
-	private int pontuacao;
+	private Integer fase;
+	private Integer pontuacao;
+	private Integer pontuacaoTemp;
 	Instant tempoInicioJogada ;       
 	Instant tempoFimJogada;
 	ArrayList<Long> tempoDaJogada;
@@ -32,6 +33,13 @@ public class Placar {
 	}
 
 	/**
+	 * Aumenta a pontuacao de acordo com o nivel
+	 */
+	public void aumentarPontuacao() {
+		pontuacao += fase * 10;
+	}
+
+	/**
 	 * Incrementa a fase e atribui uma pontuacao
 	 */
 	public void proximaFase() {
@@ -40,24 +48,18 @@ public class Placar {
 			pontuacao += fase;
 	}
 
-	/**
-	 * Aumenta a pontuacao de acordo com o nivel
-	 */
-	public void aumentarPontuacao() {
-		pontuacao += fase * 10;
-	}
 
 	/**
 	 * @return  informa a fase do jogador
 	 */
-	public int getFase() {
+	public Integer getFase() {
 		return fase;
 	}
 
 	/**
 	 * @return informa a pontuacao do jogador
 	 */
-	public int getPontuacao() {
+	public Integer getPontuacao() {
 		return pontuacao;
 	}
 
@@ -83,6 +85,15 @@ public class Placar {
 
 	public void setTempoDaJogada(ArrayList<Long> tempoDaJogada) {
 		this.tempoDaJogada = tempoDaJogada;
+	}
+
+	public Integer getPontuacaoTemp() {
+		if(fase == 1)
+			this.pontuacaoTemp = (fase - 1) * 10;
+		else
+			this.pontuacaoTemp = fase + ((fase - 1) * 10);
+		
+		return pontuacaoTemp;
 	}
 
 }
