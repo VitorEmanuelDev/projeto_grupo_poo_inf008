@@ -210,24 +210,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		tamanhoLista = (Integer)JOptionPane.showInputDialog(null, "Escolha o número de jogadores:", 
 				"Jogadores", JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 
-		/*String numeroJogadores = JOptionPane.showInputDialog(frame, "Quantos jogadores?", 1);
-
-		char [] numeroJogadoresChar = numeroJogadores.toCharArray();
-
-		for(int i = 0; i < numeroJogadoresChar.length; i++) {
-
-			if(numeroJogadoresChar[i] < 48 || numeroJogadoresChar[i] > 57) {		
-				numeroJogadores = "1";
-				break;		
-			}
-
-		}
-
-		if(numeroJogadores != null && !numeroJogadores.isEmpty()){
-			tamanhoLista = Integer.parseInt(numeroJogadores);
-		}else {
-			tamanhoLista = 1;
-		}*/
 	}
 
 
@@ -319,9 +301,10 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		if (jogoRodando) {
 			g.setFont(new Font("Comic", Font.BOLD, 14));
 			int display = indexJogadorAtual + 1;
-			g.drawString("Jogador " + display + ": " + campeonato.getJogadores().get(indexJogadorAtual).getNome(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
-			g.drawString("Fase:  " + campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getFase(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 20 );
-			g.drawString("Pontuacao:  " + campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getPontuacao(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 40);
+			g.drawString("Jogador " + display + ": " + campeonato.getJogadores().get(indexJogadorAtual).getNome(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET - 20);
+			g.drawString("Fase:  " + campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getFase(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
+			g.drawString("Pontos da fase anterior:  " + campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getPontuacaoTemp(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 20);
+			g.drawString("Pontos totais:  " + campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getPontuacao(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 40);
 		}
 		// Texto durante o jogo
 		g.setFont(new Font("Comic", Font.BOLD, 20));
