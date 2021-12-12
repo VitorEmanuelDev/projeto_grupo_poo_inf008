@@ -1,23 +1,22 @@
 package genius;
 
-import java.applet.AudioClip;
 import java.util.Random;
 
 /**
  * Representa uma sequencia de inteiros
  */
 public class SequenciaDeCores {
-	private int tamanho;
-	private int[] sequencia;
-	private Random random;
+	private int _quantidade;
+	private int[] _sequencia;
+	private Random _randomizador; // TODO considerar uso de lista ou tipo array
 	/**
-	 * Cria uma nova sequencia com inteiros aleatorios para qualquer tamanho
-	 * @param tamanho   tamanho da sequencia
+	 * Cria uma nova sequencia de cores com inteiros aleatorios para qualquer quantidade
+	 * @param quantidade   quantidade da sequencia
 	 */
-	public SequenciaDeCores(int tamanho) {
-		this.tamanho = tamanho;
-		sequencia = new int[tamanho];
-		random = new Random();
+	public SequenciaDeCores(int quantidade) {
+		_quantidade = quantidade;
+		_sequencia = new int[_quantidade];
+		_randomizador = new Random();
 		criarSequencia();
 	}
 
@@ -25,8 +24,8 @@ public class SequenciaDeCores {
 	 * Cria uma sequencia aleatoria de cores
 	 */
 	private void criarSequencia() {
-		for (int i = 0; i < tamanho; i++) {
-			sequencia[i] = random.nextInt(4);	
+		for (int i = 0; i < _quantidade; i++) {
+			_sequencia[i] = _randomizador.nextInt(4);	
 		}
 	}
 
@@ -36,15 +35,15 @@ public class SequenciaDeCores {
 	 * @return  elemento da sequencia em determinado indice. Se o indice for invalido, retorna -1
 	 */
 	public int getIndice(int indice) {
-		if (indice < 0 || indice >= tamanho)
+		if (indice < 0 || indice >= _quantidade)
 			return -1;
-		return sequencia[indice];
+		return _sequencia[indice];
 	}
 
 	/**
-	 * @return  tamanho da sequencia
+	 * @return quantidade da sequencia
 	 */
 	public int getTamanho() {
-		return tamanho;
+		return _quantidade;
 	}
 }

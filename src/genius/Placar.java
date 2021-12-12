@@ -8,92 +8,89 @@ import java.util.ArrayList;
  */
 public class Placar {
 
-	private Integer fase;
-	private Integer pontuacao;
-	private Integer pontuacaoTemp;
-	Instant tempoInicioJogada;       
-	Instant tempoFimJogada;
-	ArrayList<Long> tempoDaJogada;
+	private Integer _fase;
+	private Integer _pontuacao;
+	Instant _tempoInicioJogada;       
+	Instant _tempoFimJogada;
+	ArrayList<Long> _tempoDaJogada;
 
 	/**
 	 * Construtor cria um novo placar
 	 */
 	public Placar() {
-		fase = 0;
-		pontuacao = 0;
-		tempoDaJogada = new ArrayList<>();
+		_fase = 0;
+		_pontuacao = 0;
+		_tempoDaJogada = new ArrayList<>();
 	}
 
 	/**
 	 * Reinicia o placar
 	 */
 	public void reinicializar() {
-		fase = 0;
-		pontuacao = 0;
+		_fase = 0;
+		_pontuacao = 0;
 	}
 
 	/**
 	 * Aumenta a pontuacao de acordo com o nivel
 	 */
 	public void aumentarPontuacao() {
-		pontuacao += fase * 10;
+		_pontuacao += _fase * 10;
 	}
 
 	/**
 	 * Incrementa a fase e atribui uma pontuacao
 	 */
 	public void proximaFase() {
-		fase++;
-		if(fase != 1)
-			pontuacao += fase;
+		_fase++;
+		if(_fase != 1) {
+			_pontuacao += _fase;
+		}
 	}
-
 
 	/**
 	 * @return  informa a fase do jogador
 	 */
 	public Integer getFase() {
-		return fase;
+		return _fase;
 	}
 
 	/**
 	 * @return informa a pontuacao do jogador
 	 */
 	public Integer getPontuacao() {
-		return pontuacao;
+		return _pontuacao;
 	}
 
 	public Instant getTempoInicioJogada() {
-		return tempoInicioJogada;
+		return _tempoInicioJogada;
 	}
 
 	public void setTempoInicioJogada(Instant tempoInicioJogada) {
-		this.tempoInicioJogada = tempoInicioJogada;
+		_tempoInicioJogada = tempoInicioJogada;
 	}
 
 	public Instant getTempoFimJogada() {
-		return tempoFimJogada;
+		return _tempoFimJogada;
 	}
 
 	public void setTempoFimJogada(Instant tempoFimJogada) {
-		this.tempoFimJogada = tempoFimJogada;
+		_tempoFimJogada = tempoFimJogada;
 	}
 
 	public ArrayList<Long> getTempoDaJogada() {
-		return tempoDaJogada;
+		return _tempoDaJogada;
 	}
 
 	public void setTempoDaJogada(ArrayList<Long> tempoDaJogada) {
-		this.tempoDaJogada = tempoDaJogada;
+		_tempoDaJogada = tempoDaJogada;
 	}
 
 	public Integer getPontuacaoTemp() {
-		if(fase == 1)
-			this.pontuacaoTemp = (fase - 1) * 10;
-		else
-			this.pontuacaoTemp = fase + ((fase - 1) * 10);
-		
-		return pontuacaoTemp;
+		if(_fase == 1) {
+			return (_fase - 1) * 10;
+		} else {
+			return _fase + (_fase - 1) * 10;
+		}
 	}
-
 }

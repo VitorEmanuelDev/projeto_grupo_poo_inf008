@@ -5,31 +5,30 @@ import java.util.List;
 
 public class Campeonato {
 
-	private String nome;
-	private List<Jogador> jogadores;
+	private String _nome;
+	private List<Jogador> _jogadores;
 
 	public Campeonato() {
-		this.jogadores = new ArrayList<Jogador>();
+		_jogadores = new ArrayList<Jogador>();
 	}
 	
 	public Campeonato(String nome) {
-		this.nome = nome;
+		_nome = nome;
 	}
 
 	public String getNome() {
-		return nome;
+		return _nome;
 	}
 
 	public void setNome(String nome) {
-		this.nome = nome;
+		_nome = nome;
 	}
 
 	public List<Jogador> getJogadores() {
-		return jogadores;
+		return _jogadores;
 	}
 
 	public void setJogadores(List<Jogador> jogadores) {
-		this.jogadores = jogadores;
+		_jogadores = jogadores;
 	}
-	
 }

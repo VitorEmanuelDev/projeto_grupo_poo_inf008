@@ -2,41 +2,40 @@ package genius;
 
 public class Jogador {
 // TODO analisar possibilidade de uso do temporalizar aqui ou no placar
-	Placar placar;
-	String nome;
-	String apelido;
+	Placar _placar;
+	String _nome;
+	String _apelido;
 	
 	public Jogador() {
 	
 	}
 
 	public Jogador(String nome) {
-		this.nome = nome;
-		this.placar = new Placar();
+		_nome = nome;
+		_placar = new Placar();
 	}
 
 	public Placar getPlacar() {
-		return placar;
+		return _placar;
 	}
 
 	public void setPlacar(Placar placar) {
-		this.placar = placar;
+		_placar = placar;
 	}
 
 	public String getNome() {
-		return nome;
+		return _nome;
 	}
 
 	public void setNome(String nome) {
-		this.nome = nome;
+		_nome = nome;
 	}
 
 	public String getApelido() {
-		return apelido;
+		return _apelido;
 	}
 
 	public void setApelido(String apelido) {
-		this.apelido = apelido;
+		_apelido = apelido;
 	}
-
 }
