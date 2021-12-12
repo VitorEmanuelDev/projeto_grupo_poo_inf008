@@ -153,12 +153,14 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 
 		Long jogadaMaisRapida = Long.MAX_VALUE;
 
-		final Long [] listaJogadaMaisRapida = new Long[tamanhoLista];
+		Long [] listaJogadaMaisRapida = new Long[tamanhoLista];
+		Long [] somaTotalTempo = new Long[tamanhoLista];
 
 		for(int i = 0; i < tamanhoLista; i++) {
-
+			somaTotalTempo[i] = (long) 0;;
 			for(int j = 0; j < campeonato.getJogadores().get(i).getPlacar().getTempoDaJogada().size(); j++) {
 				long atual = campeonato.getJogadores().get(i).getPlacar().getTempoDaJogada().get(j);
+				somaTotalTempo[i] += atual;
 				if(atual < jogadaMaisRapida) {
 					jogadaMaisRapida = atual;
 					listaJogadaMaisRapida[i] = jogadaMaisRapida;
@@ -170,13 +172,13 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		}
 
 		String[] colunas = new String[] {
-				"Nome", "Apelido", "Pontuacao", "Jogada mais rapida (segundos)"
+				"Nome", "Apelido", "Pontuacao", "Mais rapida (s)", "Tempo total"
 		};
 
-		Object[][] dados = new Object[tamanhoLista][4];
+		Object[][] dados = new Object[tamanhoLista][5];
 
 		for(int i = 0; i < tamanhoLista; i++) {
-			for(int j = 0; j < 4; j++) {
+			for(int j = 0; j < 5; j++) {
 				if(j == 0)
 					dados[i][j] = campeonato.getJogadores().get(i).getNome();
 				if(j == 1)
@@ -185,6 +187,8 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 					dados[i][j] = campeonato.getJogadores().get(i).getPlacar().getPontuacao();
 				if(j == 3)
 					dados[i][j] = listaJogadaMaisRapida[i];
+				if(j == 4)
+					dados[i][j] = somaTotalTempo[i];
 			}
 		}
 
