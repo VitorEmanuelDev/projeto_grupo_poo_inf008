@@ -43,7 +43,7 @@ public class SequenciaDeCores {
 	/**
 	 * @return quantidade da sequencia
 	 */
-	public int getTamanho() {
+	public int getQuantidade() {
 		return _quantidade;
 	}
 }

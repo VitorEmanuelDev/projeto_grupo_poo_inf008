@@ -431,7 +431,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	 * Avance para o proximo elemento da sequencia
 	 */
 	private void avanceSequencia() {
-		if (_indiceDePadroesDoJogo >= _sequenciaAtual.getTamanho()) {
+		if (_indiceDePadroesDoJogo >= _sequenciaAtual.getQuantidade()) {
 			_mostrarSequencia = false;
 			return;
 		}
@@ -604,7 +604,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 				_jogadorErrou = false;
 				_campeonatoAtual.getJogadores().get(_indexJogadorAtual).getPlacar().aumentarPontuacao();
 				_indiceDePadroesDoJogador++;
-				if (_indiceDePadroesDoJogador >= _sequenciaAtual.getTamanho()) {
+				if (_indiceDePadroesDoJogador >= _sequenciaAtual.getQuantidade()) {
 					_avancarFase();
 				}
 			} else if (_indexJogadorAtual + 1 < _campeonatoAtual.getJogadores().size()) {
