@@ -18,7 +18,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
 	private static Genius genius;//singleton?
 	private Campeonato campeonato;
 	private Integer tamanhoLista;//teste hardcoded
@@ -29,6 +28,8 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	private JButton botaoPause;
 	private JButton botaoInserirDados;
 	private JComboBox<String> comboBoxDificuldade;
+	private JComboBox<String> comboBoxVelocidade;
+	private Integer moduloVelocidade;
 	private QuadradosCores[] cores;
 	private Timer temporizador;
 	private Long instantePrePausa = (long) 0;
@@ -60,7 +61,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	private boolean jogadorErrou = false;
 	private boolean avancarDeFase = false;
 	private boolean mostrarSequencia = false;
-	private int cliques = 0;
+	private int toques = 0;
 	private int indiceDePadroesDoJogador;
 	private int indiceDePadroesDoJogo;
 	private int indexJogadorAtual = 0;
@@ -86,6 +87,10 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	}
 
 	private void criarEntradaDeDadosInicial() {
+		Integer[] options = {1, 2, 3, 4, 5, 6, 7 ,8};
+		tamanhoLista = (Integer)JOptionPane.showInputDialog(null, "Escolha o número de jogadores:", 
+				"Jogadores", JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+		
 		campeonato = new Campeonato();
 		JFrame frame = new JFrame("Entrada inicial de dados");
 		JLabel labelCampeonato = new JLabel();
@@ -108,6 +113,14 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		comboBoxDificuldade.setBounds(50, 50, 90, 20);
 		frame.add(labelDificuldade);
 		frame.add(comboBoxDificuldade);
+		
+		JLabel labelVelocidade = new JLabel("Escolha a velocidade:");
+		labelVelocidade.setForeground(Color.WHITE);
+		String [] velocidades = {"normal","lento","rápido"};        
+		comboBoxVelocidade = new JComboBox<String>(velocidades);
+		comboBoxVelocidade.setBounds(50, 50, 90, 20);
+		frame.add(labelVelocidade);
+		frame.add(comboBoxVelocidade);
 
 		for(int i = 0; i < tamanhoLista; i++) {
 			Jogador jogador = new Jogador();
@@ -140,7 +153,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 
 		Long jogadaMaisRapida = Long.MAX_VALUE;
 
-		Long [] listaJogadaMaisRapida = new Long[tamanhoLista];
+		final Long [] listaJogadaMaisRapida = new Long[tamanhoLista];
 
 		for(int i = 0; i < tamanhoLista; i++) {
 
@@ -205,11 +218,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		frame.addMouseListener(this);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		Integer[] options = {1, 2, 3, 4, 5, 6, 7 ,8};
-		tamanhoLista = (Integer)JOptionPane.showInputDialog(null, "Escolha o número de jogadores:", 
-				"Jogadores", JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-
 	}
 
 
@@ -335,30 +343,30 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 			return;
 		}
 
-		cliques++;
+		toques++;
 
 		if (mostrarSequencia) {
-			if (cliques % 40 == 0) {
+			if (toques % moduloVelocidade == 0) {
 				avanceSequencia();
-				cliques = 0;
+				toques = 0;
 			}
-			else if (cliques % 20 == 0) {
+			else if (toques % 20 == 0) {
 				triggerTodasPiscando(false);
 			}
 		}
 
 		else if (avancarDeFase) {
 			triggerTodasPiscando(true);
-			if (cliques % 60 == 0) {
+			if (toques % 60 == 0) {
 				triggerTodasPiscando(false);
 				iniciarProximaFase();
-				cliques = 0;
+				toques = 0;
 			}
 		}
 		else { // rodada do jogador
-			if (cliques % 20 == 0) {
+			if (toques % 20 == 0) {
 				triggerTodasPiscando(false);
-				cliques = 0;
+				toques = 0;
 			}
 		}
 		repaint();
@@ -368,6 +376,14 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	 * Iniciar o jogo pelo temporizador, reinicializando o placar e iniciando uma sequencia
 	 */
 	private void iniciarJogada() {
+		
+		if(comboBoxVelocidade.getSelectedIndex() == 0) {
+			moduloVelocidade = 50;
+		}else if(comboBoxVelocidade.getSelectedIndex() == 1) {
+			moduloVelocidade = 70;
+		}else {
+			moduloVelocidade = 30;
+		}
 		temporizador.start();
 		triggerTodasPiscando(false);
 		jogoRodando = true;
@@ -434,7 +450,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		Long tempoDeJogada = Duration.between(tempoInicioJogada, tempoFimJogada).getSeconds();
 		tempoDeJogada = tempoDeJogada + instantePrePausa;
 		campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getTempoDaJogada().add(tempoDeJogada);
-		instantePrePausa = (long) 0;
 	}
 
 	/**
@@ -505,6 +520,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 			if (!jogoRodando) {
 				botaoPause.setText("PAUSAR");
 			} else {
+				//instantePrePausa = (long) 0;
 				campeonato.getJogadores().get(indexJogadorAtual).getPlacar().setTempoFimJogada(Instant.now());
 				Instant momentoPause = campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getTempoFimJogada();
 				Instant antesPause = campeonato.getJogadores().get(indexJogadorAtual).getPlacar().getTempoInicioJogada();
@@ -578,7 +594,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 				return;
 			cores[indiceDaCorClicada].setPiscada(true);
 			repaint();
-			cliques = 0;
+			toques = 0;
 			if (indiceDaCorClicada == sequenciaAtual.getIndice(indiceDePadroesDoJogador)) {
 				jogadorErrou = false;
 				campeonato.getJogadores().get(indexJogadorAtual).getPlacar().aumentarPontuacao();
@@ -589,7 +605,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 			} else if (indexJogadorAtual + 1 < campeonato.getJogadores().size()) {
 				jogadorErrou = true;
 				indexJogadorAtual++;
-				cliques = 0;
+				toques = 0;
 				iniciarJogada();
 			} else {
 

@@ -11,7 +11,7 @@ public class Placar {
 	private Integer fase;
 	private Integer pontuacao;
 	private Integer pontuacaoTemp;
-	Instant tempoInicioJogada ;       
+	Instant tempoInicioJogada;       
 	Instant tempoFimJogada;
 	ArrayList<Long> tempoDaJogada;
 
