@@ -31,4 +31,12 @@ public class Campeonato {
 	public void setJogadores(List<Jogador> jogadores) {
 		_jogadores = jogadores;
 	}
+
+	public Jogador getJogador(int indexJogador) {
+		return _jogadores.get(indexJogador);
+	}
+	
+	public void adicionaJogador(Jogador jogador) {
+		_jogadores.add(jogador);
+	}
 }
