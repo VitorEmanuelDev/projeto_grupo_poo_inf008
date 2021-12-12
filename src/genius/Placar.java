@@ -86,11 +86,15 @@ public class Placar {
 		_tempoDaJogada = tempoDaJogada;
 	}
 
-	public Integer getPontuacaoTemp() {
-		if(_fase == 1) {
-			return (_fase - 1) * 10;
-		} else {
-			return _fase + (_fase - 1) * 10;
+	public Integer ultimaPontuacaoAcrescentada() {
+		if(_fase != 1) {
+			int ultimaPontuacao = _fase;
+			for (int i = 1; i < _fase; i++) {
+				ultimaPontuacao += (_fase - 1) * 10;
+			}
+			return ultimaPontuacao;
 		}
+		
+		return 0;
 	}
 }

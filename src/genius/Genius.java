@@ -302,7 +302,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		g.setColor(COR_FUNDO);
 		g.fillRect(0, 0, LARGURA, ALTURA);
 
-
 		// Desenhar quadrados de _botoesCores
 		for (int i = 0; i < NUM_QUADRADOS; i++) {
 			_botoesCores[i].desenharColorirQuadrado(g);
@@ -315,8 +314,9 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 			int display = _indexJogadorAtual + 1;
 			g.drawString("Jogador " + display + ": " + _campeonatoAtual.getJogadores().get(_indexJogadorAtual).getNome(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET - 20);
 			g.drawString("Fase:  " + _campeonatoAtual.getJogadores().get(_indexJogadorAtual).getPlacar().getFase(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
-			g.drawString("Pontos da fase anterior:  " + _campeonatoAtual.getJogadores().get(_indexJogadorAtual).getPlacar().getPontuacaoTemp(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 20);
-			g.drawString("Pontos totais:  " + _campeonatoAtual.getJogadores().get(_indexJogadorAtual).getPlacar().getPontuacao(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 40);
+			g.drawString("Pontos totais: " + _campeonatoAtual.getJogadores().get(_indexJogadorAtual).getPlacar().getPontuacao()
+					+ " (+" + _campeonatoAtual.getJogadores().get(_indexJogadorAtual).getPlacar().ultimaPontuacaoAcrescentada() + ")",
+					(LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 20);
 		}
 		// Texto durante o jogo
 		g.setFont(new Font("Comic", Font.BOLD, 20));
@@ -380,7 +380,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	 * Iniciar o jogo pelo temporizador, reinicializando o placar e iniciando uma sequencia
 	 */
 	private void iniciarJogada() {
-		
 		if(_comboBoxVelocidade.getSelectedIndex() == 0) {
 			_moduloVelocidade = 50;
 		}else if(_comboBoxVelocidade.getSelectedIndex() == 1) {
@@ -509,7 +508,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 			if (!_jogoRodando) {
 				alertaJogoTerminado(false);
 				criarEntradaDeDadosInicial();
-				//iniciarJogada();
 			}
 		}
 	}
@@ -596,8 +594,9 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	public void mousePressed(MouseEvent e) {
 		if (_jogoRodando && !_mostrarSequencia && !_avancarFase) {
 			int indiceDaCorClicada = coordenadasQuadrado(e.getX(), e.getY());
-			if (indiceDaCorClicada == -1)
+			if (indiceDaCorClicada == -1) {
 				return;
+			}
 			_botoesCores[indiceDaCorClicada].setPiscada(true);
 			repaint();
 			_toques = 0;
@@ -614,7 +613,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 				_toques = 0;
 				iniciarJogada();
 			} else {
-
 				boolean empate = false;
 				if(_campeonatoAtual.getJogadores().get(0).getPlacar().getPontuacao() 
 						== _campeonatoAtual.getJogadores().get(1).getPlacar().getPontuacao()) {
@@ -640,7 +638,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 						}
 					});
 				}
-
 			}
 		}
 	}
@@ -653,8 +650,9 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	 */
 	private int coordenadasQuadrado(int x, int y) {
 		for (int i = 0; i < NUM_QUADRADOS; i++) {
-			if (_botoesCores[i].estaDentroDasCoordenadas(x, y))
+			if (_botoesCores[i].estaDentroDasCoordenadas(x, y)) {
 				return i;
+			}
 		}
 		return -1;
 	}
