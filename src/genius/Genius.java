@@ -224,8 +224,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
-
-
 	/**
 	 * Cria o botao principal
 	 */
@@ -289,8 +287,9 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		if (genius != null)
+		if (genius != null) {
 			paint((Graphics2D) g);
+		}
 	}
 
 	/**
@@ -311,16 +310,15 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		g.setColor(Color.WHITE);
 		if (_jogoRodando) {
 			g.setFont(new Font("Comic", Font.BOLD, 14));
-			int display = _indexJogadorAtual + 1;
-			g.drawString("Jogador " + display + ": " + _campeonatoAtual.getJogador(_indexJogadorAtual).getNome(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET - 20);
+			g.drawString("Jogador: " + _campeonatoAtual.getJogador(_indexJogadorAtual).getNome(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET - 20);
 			g.drawString("Fase:  " + _campeonatoAtual.getJogador(_indexJogadorAtual).getPlacar().getFase(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
 			g.drawString("Pontos totais: " + _campeonatoAtual.getJogador(_indexJogadorAtual).getPlacar().getPontuacao()
 					+ " (+" + _campeonatoAtual.getJogador(_indexJogadorAtual).getPlacar().ultimaPontuacaoAcrescentada() + ")",
 					(LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 20);
 		}
-		// Texto durante o jogo
-		g.setFont(new Font("Comic", Font.BOLD, 20));
+		// Texto quando quaisquer jogador errar
 		if (_jogoTerminado || _jogadorErrou) {
+			g.setFont(new Font("Comic", Font.BOLD, 20));
 			g.setColor(Color.RED);
 			int indexJogadorErrou = _indexJogadorAtual - 1;
 			// se _indexJogadorAtual for 0 então significa que o ultimo jogador errou, nesse caso
@@ -378,11 +376,11 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	 * Iniciar o jogo pelo temporizador, reinicializando o placar e iniciando uma sequencia
 	 */
 	private void iniciarJogada() {
-		if(_comboBoxVelocidade.getSelectedIndex() == 0) {
+		if (_comboBoxVelocidade.getSelectedIndex() == 0) {
 			_moduloVelocidade = 50;
-		}else if(_comboBoxVelocidade.getSelectedIndex() == 1) {
+		} else if(_comboBoxVelocidade.getSelectedIndex() == 1) {
 			_moduloVelocidade = 70;
-		}else {
+		} else {
 			_moduloVelocidade = 30;
 		}
 		temporizador.start();
@@ -400,11 +398,12 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	 * Continuar o jogo pelo temporizador e iniciando uma sequencia para desempate
 	 */
 	private void reiniciarJogadaParaDesempate() {
+		// TODO considerar necessidade dessa função
 		temporizador.start();
 		triggerTodasPiscando(false);
 		_jogoRodando = true;
 		_jogoTerminado = false;
-		_campeonatoAtual.getJogador(_indexJogadorAtual).getPlacar().proximaFase();
+		//_campeonatoAtual.getJogador(_indexJogadorAtual).getPlacar().proximaFase();
 		_campeonatoAtual.getJogador(_indexJogadorAtual).getPlacar().setTempoInicioJogada(Instant.now());
 		iniciarUmaSequencia();
 	}
@@ -539,19 +538,19 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	 */
 	private class botaoInserirDadosListener implements ActionListener {
 
-		JTextField nomeCampeonato;
-		JFrame frame;
+		JTextField _nomeCampeonato;
+		JFrame _frameInserirDados;
 
 		private botaoInserirDadosListener(JTextField nomeCampeonato, JFrame frame) {
-			this.nomeCampeonato = nomeCampeonato;
-			this.frame = frame;
+			_nomeCampeonato = nomeCampeonato;
+			_frameInserirDados = frame;
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (!_jogoRodando) {
 
-				String nomeCampeonatoStr = nomeCampeonato.getText();
+				String nomeCampeonatoStr = _nomeCampeonato.getText();
 				System.out.println("nome campeonato: " + nomeCampeonatoStr);//test
 
 				if(nomeCampeonatoStr != null && !nomeCampeonatoStr.isEmpty()) {
@@ -581,7 +580,8 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 				}
 				_campeonatoAtual.setJogadores(_campeonatoAtual.getJogadores());		
 				alertaJogoTerminado(false);
-				frame.setVisible(false);
+				_frameInserirDados.setVisible(false);
+				// TODO criar funcao iniciar campeonato, que vai popular os dados
 				iniciarJogada();
 			}
 		}
@@ -605,28 +605,17 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 				if (_indiceDePadroesDoJogador >= _sequenciaAtual.getQuantidade()) {
 					_avancarFase();
 				}
-			} else if (_indexJogadorAtual + 1 < _campeonatoAtual.getJogadores().size()) {
+			} else if (_indexJogadorAtual + 1 < _campeonatoAtual.getQuantidadeJogadores()) {
 				_jogadorErrou = true;
 				_indexJogadorAtual++;
 				_toques = 0;
 				iniciarJogada();
 			} else {
-				// TODO corrigir desempate
-				boolean empate = false;
-				if (_campeonatoAtual.getJogador(0).getPlacar().getPontuacao()
-						== _campeonatoAtual.getJogador(1).getPlacar().getPontuacao()) {
-					empate = true;
-				}
-
-				if(empate) {
-					int input = JOptionPane.showConfirmDialog(null, 
+				if (_campeonatoAtual.checaEmpate()) {
+					_indexJogadorAtual = 0;
+					JOptionPane.showConfirmDialog(null, 
 							"Continuar jogo em fase extra.", "Ocorreu um empate!!!", JOptionPane.DEFAULT_OPTION);
-					System.out.println(input);
-					if(input == 0) {
-						//iniciarJogada();
-						_indexJogadorAtual = 0;
-						reiniciarJogadaParaDesempate();
-					}
+					reiniciarJogadaParaDesempate();
 				} else {
 					_jogoTerminado = true;
 
