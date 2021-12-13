@@ -45,7 +45,7 @@ public class Campeonato {
 	public void adicionaJogador(Jogador jogador) {
 		_jogadores.add(jogador);
 	}
-	
+
 	public int getQuantidadeJogadores() {
 		if (_jogadoresEmpatados.isEmpty()) {
 			return _jogadores.size();
