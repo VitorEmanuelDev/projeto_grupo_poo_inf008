@@ -89,58 +89,69 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		
 		campeonatoAtual = new Campeonato();
 		JFrame frame = new JFrame("Entrada inicial de dados");
-		JLabel labelCampeonato = new JLabel();
-		JTextField nomeCampeonato = new JTextField(15);
-		frame.setSize(400, 400);
 		frame.getContentPane().setBackground(COR_FUNDO);
 		frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		JPanel painel = new JPanel();
+		painel.setLayout(new BoxLayout(painel, BoxLayout.PAGE_AXIS));
+		painel.setBackground(COR_FUNDO);
+		frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.PAGE_AXIS));
+
+		JLabel labelCampeonato = new JLabel("Nome do campeonato");
+		labelCampeonato.setAlignmentX(Component.LEFT_ALIGNMENT);
 		labelCampeonato.setForeground(Color.WHITE);
-		labelCampeonato.setText("Nome do campeonato:");
-		frame.add(labelCampeonato);
-		frame.add(nomeCampeonato);
+		painel.add(labelCampeonato);
+		
+		JTextField nomeCampeonato = new JTextField(15);
+		painel.add(nomeCampeonato);
 
-		JLabel labelNumeroJogadores = new JLabel();
-		labelNumeroJogadores.setForeground(Color.WHITE);
-
-		JLabel labelDificuldade = new JLabel("Escolha a dificuldade:");
+		JLabel labelDificuldade = new JLabel("Escolha a dificuldade");
+		labelDificuldade.setAlignmentX(Component.LEFT_ALIGNMENT);
 		labelDificuldade.setForeground(Color.WHITE);
-		String [] dificuldades = {"fácil","médio","difícil"};        
+		painel.add(labelDificuldade);
+
+		String [] dificuldades = {"fácil","médio","difícil"};
 		comboBoxDificuldade = new JComboBox<String>(dificuldades);
 		comboBoxDificuldade.setBounds(50, 50, 90, 20);
-		frame.add(labelDificuldade);
-		frame.add(comboBoxDificuldade);
-		
-		JLabel labelVelocidade = new JLabel("Escolha a velocidade:");
+		painel.add(comboBoxDificuldade);
+
+		JLabel labelVelocidade = new JLabel("Escolha a velocidade");
+		labelVelocidade.setAlignmentX(Component.LEFT_ALIGNMENT);
 		labelVelocidade.setForeground(Color.WHITE);
-		String [] velocidades = {"normal","lento","rápido"};        
+		painel.add(labelVelocidade);
+
+		String [] velocidades = {"normal", "lento", "rápido"};
 		comboBoxVelocidade = new JComboBox<String>(velocidades);
 		comboBoxVelocidade.setBounds(50, 50, 90, 20);
-		frame.add(labelVelocidade);
-		frame.add(comboBoxVelocidade);
+		painel.add(comboBoxVelocidade);
 
-		for(int i = 0; i < tamanhoLista; i++) {
-			Jogador jogador = new Jogador("Jogador " + (i + 1), "J" + ((i + 1)));
-			JLabel labelNome = new JLabel();
-			JLabel labelApelido = new JLabel();
-			JTextField fieldNome = new JTextField(15);
-			JTextField fieldApelido = new JTextField(15);
+		for(int i = 1; i <= tamanhoLista; i++) {
+			JLabel labelNome = new JLabel("Nome do jogador " + i);
 			labelNome.setForeground(Color.WHITE);
-			labelApelido.setForeground(Color.WHITE);
-			int display = i + 1;
-			labelNome.setText("Nome do jogador " + display);
-			frame.add(labelNome);
-			frame.add(fieldNome);	
-			labelApelido.setText("Apelido do jogador " + display);
-			frame.add(labelApelido);
-			frame.add(fieldApelido);	
-
-			campeonatoAtual.adicionaJogador(jogador);
+			painel.add(labelNome);
+			
+			JTextField fieldNome = new JTextField(15);
+			painel.add(fieldNome);
 			nomesJogadores.add(fieldNome);
+			
+			JLabel labelApelido = new JLabel("Apelido do jogador " + i);
+			labelApelido.setAlignmentX(Component.LEFT_ALIGNMENT);
+			labelApelido.setForeground(Color.WHITE);
+			painel.add(labelApelido);
+			
+			JTextField fieldApelido = new JTextField(15);
+			painel.add(fieldApelido);
 			apelidosJogadores.add(fieldApelido);
+
+			Jogador jogador = new Jogador("Jogador " + i, "J" + i);
+			campeonatoAtual.adicionaJogador(jogador);
 		}
 
-		criarBotaoInserirDados(frame, nomeCampeonato);
-		frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.PAGE_AXIS));
+		painel.add(Box.createVerticalGlue());
+		JScrollPane scrollPane = new JScrollPane(painel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		frame.getContentPane().add(scrollPane);
+        
+        criarBotaoInserirDados(frame, nomeCampeonato);
+        frame.pack();
 		frame.setVisible(true);
 	}
 
@@ -188,12 +199,17 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		}
 
 		JTable tabela = new JTable(dados, colunas);
-		tabela.setGridColor(Color.BLACK);
-		tabela.setBackground(Color.WHITE);
+		tabela.setDefaultEditor(Object.class, null);
+		tabela.setGridColor(Color.WHITE);
+		tabela.setForeground(Color.WHITE);
+		tabela.setFillsViewportHeight(true);
+		tabela.setBackground(COR_FUNDO);
+		tabela.getTableHeader().setBackground(COR_FUNDO);
+		tabela.getTableHeader().setForeground(Color.WHITE);
 		tabela.getAutoResizeMode();
 		JFrame frame = new JFrame("Resultados do " + campeonatoAtual.getNome() + " - " + java.time.LocalDate.now());
-		//frame.setSize(200, 50);
-		//frame.getContentPane().setBackground(COR_FUNDO);  //cor e tamanhho precisam ser modificados 
+		frame.setSize(200, 50);
+		frame.getContentPane().setBackground(COR_FUNDO);
 		frame.setResizable(true);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		JScrollPane jspane = new JScrollPane(tabela);
@@ -243,13 +259,13 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	 */
 	private void criarBotaoInserirDados(JFrame frame, JTextField nomeCampeonato) {
 		botaoInserirDados = new JButton("INICIAR");
+		botaoInserirDados.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 		botaoInserirDados.setBackground(Color.GREEN);
 		botaoInserirDados.setForeground(Color.BLACK);
 		botaoInserirDados.setFocusPainted(false);
 		botaoInserirDados.setFont(new Font("Comic", Font.BOLD, 10));
 		botaoInserirDados.addActionListener(new botaoInserirDadosListener(nomeCampeonato, frame));
-		setLayout(null);
-		frame.add(botaoInserirDados);	
+		frame.add(botaoInserirDados);
 	}
 
 	/**
