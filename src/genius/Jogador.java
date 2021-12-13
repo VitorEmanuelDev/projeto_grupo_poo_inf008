@@ -1,14 +1,17 @@
 package genius;
 
+import java.util.List;
+
 public class Jogador {
-	Placar placar;
-	String nome;
-	String apelido;
+
+	private Placar placar;
+	private String nome;
+	private String apelido;
 
 	public Jogador(String nome, String apelido) {
 		this.nome = nome;
 		this.apelido = apelido;
-		placar = new Placar();
+		this.placar = new Placar();
 	}
 
 	public Placar getPlacar() {
@@ -33,5 +36,41 @@ public class Jogador {
 
 	public void setApelido(String apelido) {
 		this.apelido = apelido;
+	}
+
+	public void incrementaPontuacao() {
+		placar.aumentarPontuacao();
+	}
+	
+	public int getFaseAtual() {
+		return placar.getFase();
+	}
+
+	public void pausaJogada() {
+		placar.pausaJogada();
+	}
+
+	public void retomaJogada() {
+		placar.retomaJogada();
+	}
+
+	public void avancaFase() {
+		placar.proximaFase();
+	}
+
+	public int getPontuacao() {
+		return placar.getPontuacao();
+	}
+
+	public int ultimaPontuacaoAcrescentada() {
+		return placar.ultimaPontuacaoAcrescentada();
+	}
+
+	public Long getTempoJogada(int indexJogada) {
+		return placar.getTempoJogada(indexJogada);
+	}
+
+	public List<Long> getTempoJogadas() {
+		return placar.getTempoJogadas();
 	}
 }

@@ -6,10 +6,11 @@ import java.io.File;
 import java.net.URL;
 
 public class Sons {
-	AudioClip audioVermelho;
-	AudioClip audioAzul;
-	AudioClip audioAmarelo;
-	AudioClip audioVerde;
+
+	private AudioClip audioVermelho;
+	private AudioClip audioAzul;
+	private AudioClip audioAmarelo;
+	private AudioClip audioVerde;
 
 	public Sons() { 
 		URL somVermelho = getClass().getResource("som1.wav");  
@@ -28,12 +29,15 @@ public class Sons {
 	public AudioClip getAudioVermelho() {
 		return audioVermelho;
 	}
+
 	public AudioClip getAudioAzul() {
 		return audioAzul;
 	}
+
 	public AudioClip getAudioAmarelo() {
 		return audioAmarelo;
 	}
+
 	public AudioClip getAudioVerde() {
 		return audioVerde;
 	}

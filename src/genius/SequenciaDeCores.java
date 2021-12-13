@@ -6,6 +6,7 @@ import java.util.Random;
  * Representa uma sequencia de inteiros
  */
 public class SequenciaDeCores {
+
 	private int quantidade;
 	private int[] sequencia;
 	private Random randomizador;
@@ -35,8 +36,9 @@ public class SequenciaDeCores {
 	 * @return  elemento da sequencia em determinado indice. Se o indice for invalido, retorna -1
 	 */
 	public int getIndice(int indice) {
-		if (indice < 0 || indice >= quantidade)
+		if (indice < 0 || indice >= quantidade) {
 			return -1;
+		}
 		return sequencia[indice];
 	}
 
