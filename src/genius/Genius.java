@@ -155,11 +155,11 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	}
 
 	private void criarRelatorioFinal() {
-		Long jogadaMaisRapida = Long.MAX_VALUE;
 		Long [] listaJogadaMaisRapida = new Long[tamanhoLista];
 		Long [] somaTotalTempo = new Long[tamanhoLista];
 
 		for (int i = 0; i < tamanhoLista; i++) {
+			Long jogadaMaisRapida = Long.MAX_VALUE;
 			somaTotalTempo[i] = 0L;
 			for (int j = 0; j < campeonatoAtual.getJogador(i).getTempoJogadas().size(); j++) {
 				long atual = campeonatoAtual.getJogador(i).getTempoJogada(j);
@@ -168,7 +168,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 					jogadaMaisRapida = atual;
 					listaJogadaMaisRapida[i] = jogadaMaisRapida;
 					if (listaJogadaMaisRapida[i] == Long.MAX_VALUE) {
-						listaJogadaMaisRapida[i] = 99L;
+						listaJogadaMaisRapida[i] = 0L;
 					}
 				}
 			}
