@@ -180,19 +180,11 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		Object[][] dados = new Object[tamanhoLista][5];
 
 		for (int i = 0; i < tamanhoLista; i++) {
-			for (int j = 0; j < 5; j++) {
-				if (j == 0) {
-					dados[i][j] = campeonatoAtual.getJogador(i).getNome();
-				} else if (j == 1) {
-					dados[i][j] = campeonatoAtual.getJogador(i).getApelido();
-				} else if (j == 2) {
-					dados[i][j] = campeonatoAtual.getJogador(i).getPontuacao();
-				} else if (j == 3) {
-					dados[i][j] = listaJogadaMaisRapida[i];
-				} else if (j == 4) {
-					dados[i][j] = somaTotalTempo[i];
-				}
-			}
+			dados[i][0] = campeonatoAtual.getJogador(i).getNome();
+			dados[i][1] = campeonatoAtual.getJogador(i).getApelido();
+			dados[i][2] = campeonatoAtual.getJogador(i).getPontuacao();
+			dados[i][3] = listaJogadaMaisRapida[i];
+			dados[i][4] = somaTotalTempo[i];
 		}
 
 		JTable tabela = new JTable(dados, colunas);
@@ -210,7 +202,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		frame.setResizable(true);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		JScrollPane jspane = new JScrollPane(tabela);
-		jspane.setSize(200, 50);
+		jspane.setSize(220, 50);
 		jspane.setBackground(COR_FUNDO);
 		frame.add(jspane);  
 		frame.pack();
