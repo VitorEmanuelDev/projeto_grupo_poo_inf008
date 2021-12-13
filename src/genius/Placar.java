@@ -1,7 +1,9 @@
 package genius;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Representa o placar
@@ -10,9 +12,9 @@ public class Placar {
 
 	private Integer fase;
 	private Integer pontuacao;
-	Instant tempoInicioJogada;       
-	Instant tempoFimJogada;
-	ArrayList<Long> tempoDaJogada;
+	private Instant instanteFaseAtual;
+	private Long tempoPrePausa;
+	private List<Long> tempoJogadas;
 
 	/**
 	 * Construtor cria um novo placar
@@ -20,7 +22,10 @@ public class Placar {
 	public Placar() {
 		fase = 0;
 		pontuacao = 0;
-		tempoDaJogada = new ArrayList<>();
+		// o L no final do numero significa que é para ser interpretado como `long`
+		tempoPrePausa = 0L;
+		instanteFaseAtual = null;
+		tempoJogadas = new ArrayList<>();
 	}
 
 	/**
@@ -29,6 +34,9 @@ public class Placar {
 	public void reinicializar() {
 		fase = 0;
 		pontuacao = 0;
+		instanteFaseAtual = null;
+		tempoPrePausa = 0L;
+		tempoJogadas.clear();
 	}
 
 	/**
@@ -43,9 +51,12 @@ public class Placar {
 	 */
 	public void proximaFase() {
 		fase++;
-		if(fase != 1) {
+		if (fase != 1) {
+			tempoJogadas.add(Duration.between(instanteFaseAtual, Instant.now()).getSeconds() + tempoPrePausa);
+			tempoPrePausa = 0L;
 			pontuacao += fase;
 		}
+		instanteFaseAtual = Instant.now();
 	}
 
 	/**
@@ -62,39 +73,31 @@ public class Placar {
 		return pontuacao;
 	}
 
-	public Instant getTempoInicioJogada() {
-		return tempoInicioJogada;
+	public Long getTempoJogada(int indexJogada) {
+		return tempoJogadas.get(indexJogada);
 	}
 
-	public void setTempoInicioJogada(Instant tempoInicioJogada) {
-		this.tempoInicioJogada = tempoInicioJogada;
+	public List<Long> getTempoJogadas() {
+		return tempoJogadas;
 	}
 
-	public Instant getTempoFimJogada() {
-		return tempoFimJogada;
+	public void pausaJogada() {
+		tempoPrePausa += Duration.between(instanteFaseAtual, Instant.now()).getSeconds();
 	}
 
-	public void setTempoFimJogada(Instant tempoFimJogada) {
-		this.tempoFimJogada = tempoFimJogada;
-	}
-
-	public ArrayList<Long> getTempoDaJogada() {
-		return tempoDaJogada;
-	}
-
-	public void setTempoDaJogada(ArrayList<Long> tempoDaJogada) {
-		this.tempoDaJogada = tempoDaJogada;
+	public void retomaJogada() {
+		instanteFaseAtual = Instant.now();
 	}
 
 	public Integer ultimaPontuacaoAcrescentada() {
-		if(fase != 1) {
+		if (fase != 1) {
 			int ultimaPontuacao = fase;
 			for (int i = 1; i < fase; i++) {
 				ultimaPontuacao += (fase - 1) * 10;
 			}
 			return ultimaPontuacao;
 		}
-		
+
 		return 0;
 	}
 }

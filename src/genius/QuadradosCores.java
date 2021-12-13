@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
  * Representa um quadradona GUI do jogo
  */
 public class QuadradosCores {
+
     private Color corPrincipal;
     private int largura;
     private int altura;
@@ -30,7 +31,7 @@ public class QuadradosCores {
         this.altura = altura;
         this.posicaoX = posicaoX;
         this.posicaoY = posicaoY;
-        devePiscar = false;
+        this.devePiscar = false;
         jogoTerminado = false;
     }
 
@@ -77,5 +78,4 @@ public class QuadradosCores {
     public void setJogoTerminado(boolean bool) {
         jogoTerminado = bool;
     }
-
 }
