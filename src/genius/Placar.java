@@ -8,43 +8,43 @@ import java.util.ArrayList;
  */
 public class Placar {
 
-	private Integer _fase;
-	private Integer _pontuacao;
-	Instant _tempoInicioJogada;       
-	Instant _tempoFimJogada;
-	ArrayList<Long> _tempoDaJogada;
+	private Integer fase;
+	private Integer pontuacao;
+	Instant tempoInicioJogada;       
+	Instant tempoFimJogada;
+	ArrayList<Long> tempoDaJogada;
 
 	/**
 	 * Construtor cria um novo placar
 	 */
 	public Placar() {
-		_fase = 0;
-		_pontuacao = 0;
-		_tempoDaJogada = new ArrayList<>();
+		fase = 0;
+		pontuacao = 0;
+		tempoDaJogada = new ArrayList<>();
 	}
 
 	/**
 	 * Reinicia o placar
 	 */
 	public void reinicializar() {
-		_fase = 0;
-		_pontuacao = 0;
+		fase = 0;
+		pontuacao = 0;
 	}
 
 	/**
 	 * Aumenta a pontuacao de acordo com o nivel
 	 */
 	public void aumentarPontuacao() {
-		_pontuacao += _fase * 10;
+		pontuacao += fase * 10;
 	}
 
 	/**
 	 * Incrementa a fase e atribui uma pontuacao
 	 */
 	public void proximaFase() {
-		_fase++;
-		if(_fase != 1) {
-			_pontuacao += _fase;
+		fase++;
+		if(fase != 1) {
+			pontuacao += fase;
 		}
 	}
 
@@ -52,45 +52,45 @@ public class Placar {
 	 * @return  informa a fase do jogador
 	 */
 	public Integer getFase() {
-		return _fase;
+		return fase;
 	}
 
 	/**
 	 * @return informa a pontuacao do jogador
 	 */
 	public Integer getPontuacao() {
-		return _pontuacao;
+		return pontuacao;
 	}
 
 	public Instant getTempoInicioJogada() {
-		return _tempoInicioJogada;
+		return tempoInicioJogada;
 	}
 
 	public void setTempoInicioJogada(Instant tempoInicioJogada) {
-		_tempoInicioJogada = tempoInicioJogada;
+		this.tempoInicioJogada = tempoInicioJogada;
 	}
 
 	public Instant getTempoFimJogada() {
-		return _tempoFimJogada;
+		return tempoFimJogada;
 	}
 
 	public void setTempoFimJogada(Instant tempoFimJogada) {
-		_tempoFimJogada = tempoFimJogada;
+		this.tempoFimJogada = tempoFimJogada;
 	}
 
 	public ArrayList<Long> getTempoDaJogada() {
-		return _tempoDaJogada;
+		return tempoDaJogada;
 	}
 
 	public void setTempoDaJogada(ArrayList<Long> tempoDaJogada) {
-		_tempoDaJogada = tempoDaJogada;
+		this.tempoDaJogada = tempoDaJogada;
 	}
 
 	public Integer ultimaPontuacaoAcrescentada() {
-		if(_fase != 1) {
-			int ultimaPontuacao = _fase;
-			for (int i = 1; i < _fase; i++) {
-				ultimaPontuacao += (_fase - 1) * 10;
+		if(fase != 1) {
+			int ultimaPontuacao = fase;
+			for (int i = 1; i < fase; i++) {
+				ultimaPontuacao += (fase - 1) * 10;
 			}
 			return ultimaPontuacao;
 		}

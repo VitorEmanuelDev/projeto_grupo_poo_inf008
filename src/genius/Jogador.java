@@ -1,37 +1,37 @@
 package genius;
 
 public class Jogador {
-	Placar _placar;
-	String _nome;
-	String _apelido;
+	Placar placar;
+	String nome;
+	String apelido;
 
 	public Jogador(String nome, String apelido) {
-		_nome = nome;
-		_apelido = apelido;
-		_placar = new Placar();
+		this.nome = nome;
+		this.apelido = apelido;
+		placar = new Placar();
 	}
 
 	public Placar getPlacar() {
-		return _placar;
+		return placar;
 	}
 
 	public void setPlacar(Placar placar) {
-		_placar = placar;
+		this.placar = placar;
 	}
 
 	public String getNome() {
-		return _nome;
+		return nome;
 	}
 
 	public void setNome(String nome) {
-		_nome = nome;
+		this.nome = nome;
 	}
 
 	public String getApelido() {
-		return _apelido;
+		return apelido;
 	}
 
 	public void setApelido(String apelido) {
-		_apelido = apelido;
+		this.apelido = apelido;
 	}
 }
