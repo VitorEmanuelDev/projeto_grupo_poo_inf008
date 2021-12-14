@@ -91,7 +91,10 @@ public class Placar implements java.io.Serializable {
 	}
 
 	public void pausaJogada() {
-		tempoPrePausa += Duration.between(instanteFaseAtual, Instant.now()).getSeconds();
+		if (instanteFaseAtual != null) {
+			tempoPrePausa += Duration.between(instanteFaseAtual, Instant.now()).getSeconds();
+			instanteFaseAtual = null;
+		}
 	}
 
 	public void retomaJogada() {

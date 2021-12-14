@@ -58,7 +58,7 @@ public class Campeonato implements java.io.Serializable {
 			return jogadoresEmpatados.size();
 		}
 	}
-	
+
 	public boolean checaEmpate() {
 		jogadoresEmpatados.clear();
 

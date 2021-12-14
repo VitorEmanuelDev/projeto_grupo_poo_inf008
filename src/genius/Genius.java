@@ -77,7 +77,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 
 
 	/**
-	 * Construtor cria o frame a desenha os graficos do jogo
+	 * Construtor, cria o frame principal, inicializa o temporizador e botões
 	 */
 	public Genius() {
 		criarFrame();
@@ -90,6 +90,10 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		repaint();
 	}
 
+	/*
+	 * Cria tela adicional de coleta de dados do campeonato, tanto seus participantes quanto a
+	 * dificuldade, velocidade e nome do campeonato
+	 */
 	private void criarEntradaDeDadosInicial() {
 		Integer[] options = {1, 2, 3, 4, 5, 6, 7, 8};
 		Integer tamanhoLista = (Integer) JOptionPane.showInputDialog(null, "Escolha o número de jogadores:", 
@@ -164,10 +168,13 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		frame.setVisible(true);
 	}
 
+	/*
+	 * Cria tela de relatório de desempenho dos jogadores durante o campeonato
+	 */
 	private void criarRelatorioFinal() {
+		// inicializa e popula jogada mais rápida e soma total do tempo jogado pelo jogador
 		Long [] listaJogadaMaisRapida = new Long[campeonatoAtual.getQuantidadeJogadores()];
 		Long [] somaTotalTempo = new Long[campeonatoAtual.getQuantidadeJogadores()];
-
 		for (int i = 0; i < campeonatoAtual.getQuantidadeJogadores(); i++) {
 			Long jogadaMaisRapida = Long.MAX_VALUE;
 			somaTotalTempo[i] = 0L;
@@ -185,11 +192,11 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 
+		// popula colunas e dados utilizados pela tabela de relatório
 		String[] colunas = new String[] {
 				"Nome", "Apelido", "Fase", "Pontuacao", "Mais rapida (s)", "Tempo total"
 		};
 		Object[][] dados = new Object[campeonatoAtual.getQuantidadeJogadores()][6];
-
 		for (int i = 0; i < campeonatoAtual.getQuantidadeJogadores(); i++) {
 			dados[i][0] = campeonatoAtual.getJogador(i).getNome();
 			dados[i][1] = campeonatoAtual.getJogador(i).getApelido();
@@ -208,6 +215,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		tabela.getTableHeader().setBackground(COR_FUNDO);
 		tabela.getTableHeader().setForeground(Color.WHITE);
 		tabela.getAutoResizeMode();
+
 		JFrame frame = new JFrame("Resultados do " + campeonatoAtual.getNome() + " - " + java.time.LocalDate.now());
 		frame.setSize(220, 50);
 		frame.getContentPane().setBackground(COR_FUNDO);
@@ -223,7 +231,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Criar frame principal
+	 * Cria frame principal
 	 */
 	private void criarFrame() {
 		JFrame frame = new JFrame(NOME);
@@ -246,9 +254,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		botaoPrincipal.setForeground(Color.BLACK);
 		botaoPrincipal.setFocusPainted(false);
 		botaoPrincipal.setFont(new Font("Comic", Font.BOLD, 10));
-		int offset_x = 250;
-		int offset_y = 292;
-		botaoPrincipal.setBounds(offset_x, offset_y, LARGURA_BOTAO_PRINCIPAL, ALTURA_BOTAO_PRINCIPAL);
+		botaoPrincipal.setBounds(250, 292, LARGURA_BOTAO_PRINCIPAL, ALTURA_BOTAO_PRINCIPAL);
 		botaoPrincipal.addActionListener(new botaoPrincipalListener());
 		add(botaoPrincipal);
 	}
@@ -276,7 +282,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		botaoAjuda.setForeground(Color.WHITE);
 		botaoAjuda.setFocusPainted(false);
 		botaoAjuda.setFont(new Font("Comic", Font.BOLD, 10));
-		botaoAjuda.setBounds(487, 10, LARGURA_BOTAO_PRINCIPAL, ALTURA_BOTAO_PRINCIPAL);
+		botaoAjuda.setBounds(475, 10, LARGURA_BOTAO_PRINCIPAL, ALTURA_BOTAO_PRINCIPAL);
 		botaoAjuda.addActionListener(new botaoAjudaListener());
 		add(botaoAjuda);
 	}
@@ -308,39 +314,40 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		paint((Graphics2D) g);
+	protected void paintComponent(Graphics grafico) {
+		super.paintComponent(grafico);
+		paint((Graphics2D) grafico);
 	}
 
 	/**
-	 * Paint the game's graphics
-	 * @param forma2D     2D graphics context
+	 * Pint os gráficos do jogo
+	 * @param grafico     contexto de grafico 2D
 	 */
-	private void paint(Graphics2D g) {
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g.setColor(COR_FUNDO);
-		g.fillRect(0, 0, LARGURA, ALTURA);
+	private void paint(Graphics2D grafico) {
+		grafico.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		grafico.setColor(COR_FUNDO);
+		grafico.fillRect(0, 0, LARGURA, ALTURA);
 
-		// Desenhar quadrados de botoesCores
+		// Desenha quadrados do botoesCores
 		for (int i = 0; i < NUM_QUADRADOS; i++) {
-			botoesCores[i].desenharColorirQuadrado(g);
+			botoesCores[i].desenharColorirQuadrado(grafico);
 		}
 
-		// Desenhar placar:
-		g.setColor(Color.WHITE);
+		// Desenha o placar
+		grafico.setColor(Color.WHITE);
 		if (jogoRodando) {
-			g.setFont(new Font("Comic", Font.BOLD, 14));
-			g.drawString("Jogador: " + campeonatoAtual.getJogador(indexJogadorAtual).getApelido(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET - 20);
-			g.drawString("Fase:  " + (campeonatoAtual.getJogador(indexJogadorAtual).getFaseAtual() - offsetFase), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
-			g.drawString("Pontos totais: " + campeonatoAtual.getJogador(indexJogadorAtual).getPontuacao()
+			grafico.setFont(new Font("Comic", Font.BOLD, 14));
+			grafico.drawString("Jogador: " + campeonatoAtual.getJogador(indexJogadorAtual).getApelido(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET - 20);
+			grafico.drawString("Fase:  " + (campeonatoAtual.getJogador(indexJogadorAtual).getFaseAtual() - offsetFase), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
+			grafico.drawString("Pontos totais: " + campeonatoAtual.getJogador(indexJogadorAtual).getPontuacao()
 					+ " (+" + campeonatoAtual.getJogador(indexJogadorAtual).ultimaPontuacaoAcrescentada() + ")",
 					(LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 20);
 		}
-		// Texto quando quaisquer jogador errar
+
+		// Texto no centro inferio quando o jogador errar
 		if (jogoTerminado || jogadorErrou) {
-			g.setFont(new Font("Comic", Font.BOLD, 20));
-			g.setColor(Color.RED);
+			grafico.setFont(new Font("Comic", Font.BOLD, 20));
+			grafico.setColor(Color.RED);
 			int indexJogadorErrou = indexJogadorAtual - 1;
 			// se indexJogadorAtual for 0 então significa que o ultimo jogador errou, nesse caso
 			// usamos o tamanho da lista de jogadores `campeonatoAtual.getJogadores()` para pegar o index do ultimo jogador
@@ -348,7 +355,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 				indexJogadorErrou = campeonatoAtual.getQuantidadeJogadores() - 1;
 			}
 
-			g.drawString(campeonatoAtual.getJogador(indexJogadorErrou).getApelido() + " errou!!!", (LARGURA/2) - 80,  550);
+			grafico.drawString(campeonatoAtual.getJogador(indexJogadorErrou).getApelido() + " errou!!!", (LARGURA/2) - 80,  550);
 		}
 	}
 
@@ -391,6 +398,10 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		repaint();
 	}
 
+	/*
+	 * Inicia o campeonato, definindo a velocidade e dificuldade do campeonato
+	 * além de inicializar a jogada do primeiro jogador
+	 */
 	private void iniciarCampeonato() {
 		if (comboBoxVelocidade.getSelectedIndex() == 0) {
 			moduloVelocidade = 50;
@@ -414,7 +425,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Iniciar o jogo pelo temporizador, reinicializando o placar e iniciando uma sequencia
+	 * Inicia define a fase do jogador baseado na dificuldade e inicia uma sequência de cores
 	 */
 	private void iniciarJogada() {
 		campeonatoAtual.getJogador(indexJogadorAtual).setFaseAtual(offsetFase);
@@ -423,7 +434,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Iniciar um sequencia com o numero piscadas equivalente a fase do jogador
+	 * Inicializa uma sequência com o numero de piscadas equivalente ao contador de fases do jogador
 	 */
 	private void iniciarUmaSequencia() {
 		sequenciaAtual = new SequenciaDeCores(campeonatoAtual.getJogador(indexJogadorAtual).getFaseAtual());
@@ -433,7 +444,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Avance para o proximo elemento da sequencia
+	 * Pisca a cor atual da sequência, toca o som correspondente e avança para o proximo elemento da sequência
 	 */
 	private void avanceSequencia() {
 		if (indiceDePadroesDoJogo >= sequenciaAtual.getQuantidade()) {
@@ -446,26 +457,17 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * 
-	 * Suba um fase e atualize o placar
-	 */
-	private void avancarFase() {
-		avancarFase = true;
-		campeonatoAtual.getJogador(indexJogadorAtual).avancaFase();
-	}
-
-	/**
-	 * Inicia o proximo fase
+	 * Avança jogador para proxima fase
 	 */
 	private void iniciarProximaFase() {
 		avancarFase = false;
 		sequenciaAtual = null;
+		campeonatoAtual.getJogador(indexJogadorAtual).avancaFase();
 		iniciarUmaSequencia();
 	}
 
 	/**
-	 * jogo terminado, parar temporizador, mas manter placar
-	 * 
+	 * Finaliza o campeonato, para temporizador e retorna estado para o inicial (antes do campeonato)
 	 */
 	private void finalizaCampeonato() {
 		alertaJogoTerminado(true);
@@ -479,8 +481,8 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Alert que todos os quadrados acarca de uma mudanca no estado do jogo
-	 * @param bool true se o jogo tiver terminado ou falso, caso contrario
+	 * Alerta que todos os quadrados acerca de uma mudanca no estado do jogo
+	 * @param bool true se o jogo tiver terminado ou false, caso contrario
 	 */
 	private void alertaJogoTerminado(boolean bool) {
 		jogoTerminado = bool;
@@ -490,7 +492,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 *  Mudar o piscar dos botoes de cores
+	 * Muda o piscar dos botoes de cores
 	 * @param bool  true se os quadrados devem estar piscando, do contrario, false
 	 */
 	private void triggerTodasPiscando(boolean bool) {
@@ -668,7 +670,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.showConfirmDialog(null,
 						"Sucesso, arquivo salvo!", "Salvar Campeonato", JOptionPane.DEFAULT_OPTION);
 
-				// retornando ao estado anterior do jogo
+				// retornando ao estado anterior do jogo e jogador
 				campeonatoAtual.getJogador(indexJogadorAtual).retomaJogada();
 				jogoRodando = jogoRodandoEstado;
 			}
@@ -695,8 +697,9 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 					+ "Trabalho Avaliativo da disciplina Programação Orientada a Objetos.\n\n"
 					+ "Discentes: George Neres, Jean Andrade, Lucas Fonsêca e Vitor Emanuel", "Ajuda", JOptionPane.DEFAULT_OPTION);
 			}
-		}           
-	// Mouse Listeners:
+		}
+
+	// Listeners do mouse:
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if (jogoRodando && !mostrarSequencia && !avancarFase) {
@@ -712,7 +715,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 				campeonatoAtual.getJogador(indexJogadorAtual).incrementaPontuacao();
 				indiceDePadroesDoJogador++;
 				if (indiceDePadroesDoJogador >= sequenciaAtual.getQuantidade()) {
-					avancarFase();
+					avancarFase = true;
 				}
 			} else if (indexJogadorAtual + 1 < campeonatoAtual.getQuantidadeJogadores()) {
 				jogadorErrou = true;
@@ -749,12 +752,20 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		}
 	}
 
+	@Override
+	public void mouseReleased(MouseEvent e) {}
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+	@Override
+	public void mouseExited(MouseEvent e) {}
+	@Override
+	public void mouseClicked(MouseEvent e) {}
+
 	/**
 	 * Pega o indice do quadrado colorido dentro de uma dada coordenada
-	 * @param x     x coordinate
-	 * @param y     y coordinate
+	 * @param x     coordenada x
+	 * @param y     coordenada y
 	 * @return      indice do quadrado de cor dentro das coordenadas; -1 se nenhum quadrado estiver dentro
-	 * 
 	 */
 	private int coordenadasQuadrado(int x, int y) {
 		for (int i = 0; i < NUM_QUADRADOS; i++) {
@@ -764,13 +775,4 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		}
 		return -1;
 	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {}
-	@Override
-	public void mouseEntered(MouseEvent e) {}	 
-	@Override
-	public void mouseExited(MouseEvent e) {}
-	@Override
-	public void mouseClicked(MouseEvent e) {}
 }
