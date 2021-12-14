@@ -542,9 +542,9 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 					if (apelidoJogador != null && !apelidoJogador.isEmpty()) {
 						campeonatoAtual.getJogador(i).setApelido(apelidoJogador);
 					}
-					nomesJogadores.get(i).setText("");
-					apelidosJogadores.get(i).setText("");
 				}
+				nomesJogadores.clear();
+				apelidosJogadores.clear();
 				alertaJogoTerminado(false);
 				frameInserirDados.setVisible(false);
 				iniciarCampeonato();
