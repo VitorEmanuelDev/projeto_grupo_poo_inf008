@@ -3,8 +3,13 @@ package genius;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Campeonato {
+public class Campeonato implements java.io.Serializable {
 
+	/**
+	 * Representação de um campeonato, contém um nome, a lista de competidores
+	 * e também uma lista com jogadores em situação de desempate pelo primeiro lugar
+	 */
+	private static final long serialVersionUID = -3346276515940504216L;
 	private String nome;
 	private List<Jogador> jogadores;
 	private List<Jogador> jogadoresEmpatados;

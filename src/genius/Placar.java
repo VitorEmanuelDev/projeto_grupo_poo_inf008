@@ -8,8 +8,13 @@ import java.util.List;
 /**
  * Representa o placar
  */
-public class Placar {
+public class Placar implements java.io.Serializable {
 
+	/**
+	 * Representação do placar de um Jogador, contém a fase e pontuação atual,
+	 * além de também ter um contador de tempo de jogadas
+	 */
+	private static final long serialVersionUID = -2516303699424558751L;
 	private Integer fase;
 	private Integer pontuacao;
 	private Instant instanteFaseAtual;
@@ -51,7 +56,7 @@ public class Placar {
 	 */
 	public void proximaFase() {
 		fase++;
-		if (fase != 1) {
+		if (instanteFaseAtual != null) {
 			tempoJogadas.add(Duration.between(instanteFaseAtual, Instant.now()).getSeconds() + tempoPrePausa);
 			tempoPrePausa = 0L;
 			pontuacao += fase;
@@ -64,6 +69,10 @@ public class Placar {
 	 */
 	public Integer getFase() {
 		return fase;
+	}
+
+	public void setFase(int novaFase) {
+		fase = novaFase;
 	}
 
 	/**
@@ -90,7 +99,9 @@ public class Placar {
 	}
 
 	public Integer ultimaPontuacaoAcrescentada() {
-		if (fase != 1) {
+		// somente vamos calcular a ultima pontuacao acrescentada, caso o
+		// jogador tenho jogado ao menos uma vez
+		if (!tempoJogadas.isEmpty()) {
 			int ultimaPontuacao = fase;
 			for (int i = 1; i < fase; i++) {
 				ultimaPontuacao += (fase - 1) * 10;

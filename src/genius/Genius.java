@@ -1,35 +1,47 @@
 package genius;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.time.Duration;
-import java.time.Instant;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class Genius extends JPanel implements ActionListener, MouseListener{
+public class Genius extends JPanel implements ActionListener, MouseListener {
 
+	private static final long serialVersionUID = 3221282515071077635L;
 	private Campeonato campeonatoAtual;
-	private Integer tamanhoLista;
 	private List<JTextField> nomesJogadores = new ArrayList<JTextField>();
 	private List<JTextField> apelidosJogadores = new ArrayList<JTextField>();
 	private SequenciaDeCores sequenciaAtual;
 	private JButton botaoPrincipal;
 	private JButton botaoInserirDados;
+	private JButton botaoSalvarCarregar;
+	private JButton botaoAjuda;
 	private JComboBox<String> comboBoxDificuldade;
 	private JComboBox<String> comboBoxVelocidade;
 	private Integer moduloVelocidade;
 	private QuadradosCores[] botoesCores;
 	private Timer temporizador;
 	private Sons som = new Sons();
+	private int offsetFase;
+	private int toques = 0;
+	private int indiceDePadroesDoJogador;
+	private int indiceDePadroesDoJogo;
+	private int indexJogadorAtual = 0;
 
-	private AudioClip[] arraySonoro = {som.getAudioVerde(),som.getAudioVermelho(),som.getAudioAmarelo(),som.getAudioAzul()};
+	private AudioClip[] arraySonoro = { som.getAudioVerde(), som.getAudioVermelho(), som.getAudioAmarelo(), som.getAudioAzul() };
 
 
 	// CONSTANTES:
@@ -55,10 +67,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	private boolean jogadorErrou = false;
 	private boolean avancarFase = false;
 	private boolean mostrarSequencia = false;
-	private int toques = 0;
-	private int indiceDePadroesDoJogador;
-	private int indiceDePadroesDoJogo;
-	private int indexJogadorAtual = 0;
 
 
 	// Rodar jogo
@@ -73,16 +81,18 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	 */
 	public Genius() {
 		criarFrame();
-		criarBotaoPrincipal();
 		botoesCores = new QuadradosCores[NUM_QUADRADOS];
 		temporizador = new Timer(TEMPORIZADOR_DELAY, this);
 		inicializarQuadradosDeCores();
+		criarBotaoPrincipal();
+		criarBotaoSalvarCarregarCampeonato();
+		criarBotaoAjuda();
 		repaint();
 	}
 
 	private void criarEntradaDeDadosInicial() {
 		Integer[] options = {1, 2, 3, 4, 5, 6, 7, 8};
-		tamanhoLista = (Integer)JOptionPane.showInputDialog(null, "Escolha o número de jogadores:", 
+		Integer tamanhoLista = (Integer) JOptionPane.showInputDialog(null, "Escolha o número de jogadores:", 
 				"Jogadores", JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 		if (tamanhoLista == null) return;
 		
@@ -155,12 +165,13 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	}
 
 	private void criarRelatorioFinal() {
-		Long [] listaJogadaMaisRapida = new Long[tamanhoLista];
-		Long [] somaTotalTempo = new Long[tamanhoLista];
+		Long [] listaJogadaMaisRapida = new Long[campeonatoAtual.getQuantidadeJogadores()];
+		Long [] somaTotalTempo = new Long[campeonatoAtual.getQuantidadeJogadores()];
 
-		for (int i = 0; i < tamanhoLista; i++) {
+		for (int i = 0; i < campeonatoAtual.getQuantidadeJogadores(); i++) {
 			Long jogadaMaisRapida = Long.MAX_VALUE;
 			somaTotalTempo[i] = 0L;
+			listaJogadaMaisRapida[i] = 0L;
 			for (int j = 0; j < campeonatoAtual.getJogador(i).getTempoJogadas().size(); j++) {
 				long atual = campeonatoAtual.getJogador(i).getTempoJogada(j);
 				somaTotalTempo[i] += atual;
@@ -175,16 +186,17 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		}
 
 		String[] colunas = new String[] {
-				"Nome", "Apelido", "Pontuacao", "Mais rapida (s)", "Tempo total"
+				"Nome", "Apelido", "Fase", "Pontuacao", "Mais rapida (s)", "Tempo total"
 		};
-		Object[][] dados = new Object[tamanhoLista][5];
+		Object[][] dados = new Object[campeonatoAtual.getQuantidadeJogadores()][6];
 
-		for (int i = 0; i < tamanhoLista; i++) {
+		for (int i = 0; i < campeonatoAtual.getQuantidadeJogadores(); i++) {
 			dados[i][0] = campeonatoAtual.getJogador(i).getNome();
 			dados[i][1] = campeonatoAtual.getJogador(i).getApelido();
-			dados[i][2] = campeonatoAtual.getJogador(i).getPontuacao();
-			dados[i][3] = listaJogadaMaisRapida[i];
-			dados[i][4] = somaTotalTempo[i];
+			dados[i][2] = campeonatoAtual.getJogador(i).getFaseAtual();
+			dados[i][3] = campeonatoAtual.getJogador(i).getPontuacao();
+			dados[i][4] = listaJogadaMaisRapida[i];
+			dados[i][5] = somaTotalTempo[i];
 		}
 
 		JTable tabela = new JTable(dados, colunas);
@@ -211,7 +223,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	}
 
 	/**
-	 * Criar frame
+	 * Criar frame principal
 	 */
 	private void criarFrame() {
 		JFrame frame = new JFrame(NOME);
@@ -221,6 +233,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		frame.add(this);
 		frame.addMouseListener(this);
 		frame.setResizable(false);
+		setLayout(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
@@ -237,8 +250,35 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		int offset_y = 292;
 		botaoPrincipal.setBounds(offset_x, offset_y, LARGURA_BOTAO_PRINCIPAL, ALTURA_BOTAO_PRINCIPAL);
 		botaoPrincipal.addActionListener(new botaoPrincipalListener());
-		setLayout(null);
 		add(botaoPrincipal);
+	}
+
+	/**
+	 * Cria o botao de salvar/carregar campeonato
+	 */
+	private void criarBotaoSalvarCarregarCampeonato() {
+		botaoSalvarCarregar = new JButton("CARREGAR CAMPEONATO");
+		botaoSalvarCarregar.setBackground(Color.BLACK);
+		botaoSalvarCarregar.setForeground(Color.WHITE);
+		botaoSalvarCarregar.setFocusPainted(false);
+		botaoSalvarCarregar.setFont(new Font("Comic", Font.BOLD, 10));
+		botaoSalvarCarregar.setBounds(11, 10, LARGURA_BOTAO_PRINCIPAL + 90, ALTURA_BOTAO_PRINCIPAL);
+		botaoSalvarCarregar.addActionListener(new botaoSalvarCarregarListener());
+		add(botaoSalvarCarregar);
+	}
+
+	/**
+	 * Cria o botao ajuda
+	 */
+	private void criarBotaoAjuda() {
+		botaoAjuda = new JButton("AJUDA");
+		botaoAjuda.setBackground(Color.BLACK);
+		botaoAjuda.setForeground(Color.WHITE);
+		botaoAjuda.setFocusPainted(false);
+		botaoAjuda.setFont(new Font("Comic", Font.BOLD, 10));
+		botaoAjuda.setBounds(487, 10, LARGURA_BOTAO_PRINCIPAL, ALTURA_BOTAO_PRINCIPAL);
+		botaoAjuda.addActionListener(new botaoAjudaListener());
+		add(botaoAjuda);
 	}
 
 	/**
@@ -292,7 +332,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		if (jogoRodando) {
 			g.setFont(new Font("Comic", Font.BOLD, 14));
 			g.drawString("Jogador: " + campeonatoAtual.getJogador(indexJogadorAtual).getApelido(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET - 20);
-			g.drawString("Fase:  " + campeonatoAtual.getJogador(indexJogadorAtual).getFaseAtual(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
+			g.drawString("Fase:  " + (campeonatoAtual.getJogador(indexJogadorAtual).getFaseAtual() - offsetFase), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
 			g.drawString("Pontos totais: " + campeonatoAtual.getJogador(indexJogadorAtual).getPontuacao()
 					+ " (+" + campeonatoAtual.getJogador(indexJogadorAtual).ultimaPontuacaoAcrescentada() + ")",
 					(LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 20);
@@ -308,7 +348,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 				indexJogadorErrou = campeonatoAtual.getQuantidadeJogadores() - 1;
 			}
 
-			g.drawString(campeonatoAtual.getJogador(indexJogadorErrou).getNome() + " errou!!!", (LARGURA/2) - 80,  550);
+			g.drawString(campeonatoAtual.getJogador(indexJogadorErrou).getApelido() + " errou!!!", (LARGURA/2) - 80,  550);
 		}
 	}
 
@@ -359,8 +399,15 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		} else {
 			moduloVelocidade = 30;
 		}
+		offsetFase = 0;
+		if (comboBoxDificuldade.getSelectedIndex() == 1) {
+			offsetFase = 2;
+		} else if (comboBoxDificuldade.getSelectedIndex() == 2) {
+			offsetFase = 4;
+		}
 		temporizador.start();
 		botaoPrincipal.setText("PAUSAR");
+		botaoSalvarCarregar.setText("SALVAR CAMPEONATO");
 		jogoRodando = true;
 		triggerTodasPiscando(false);
 		iniciarJogada();
@@ -370,6 +417,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	 * Iniciar o jogo pelo temporizador, reinicializando o placar e iniciando uma sequencia
 	 */
 	private void iniciarJogada() {
+		campeonatoAtual.getJogador(indexJogadorAtual).setFaseAtual(offsetFase);
 		campeonatoAtual.getJogador(indexJogadorAtual).avancaFase();
 		iniciarUmaSequencia();
 	}
@@ -378,13 +426,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	 * Iniciar um sequencia com o numero piscadas equivalente a fase do jogador
 	 */
 	private void iniciarUmaSequencia() {
-		int numeroSequencias = campeonatoAtual.getJogador(indexJogadorAtual).getFaseAtual();
-		if (comboBoxDificuldade.getSelectedIndex() == 1) {
-			numeroSequencias += 2;
-		} else if (comboBoxDificuldade.getSelectedIndex() == 2) {
-			numeroSequencias += 4;
-		}
-		sequenciaAtual = new SequenciaDeCores(numeroSequencias);
+		sequenciaAtual = new SequenciaDeCores(campeonatoAtual.getJogador(indexJogadorAtual).getFaseAtual());
 		indiceDePadroesDoJogo = 0;
 		indiceDePadroesDoJogador = 0;
 		mostrarSequencia = true;
@@ -431,6 +473,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		jogoTerminado = true;
 		jogadorErrou = false;
 		botaoPrincipal.setText("JOGAR");
+		botaoSalvarCarregar.setText("CARREGAR CAMPEONATO");
 		indexJogadorAtual = 0;
 		temporizador.stop();
 	}
@@ -457,7 +500,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	}
 
 	/**
-	 * Listener class to the Main button
+	 * Listener do botão principal
 	 */
 	private class botaoPrincipalListener implements ActionListener {
 		private botaoPrincipalListener() {}
@@ -480,7 +523,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	}
 
 	/**
-	 * Listener class to the Main button
+	 * Listener do botão de inserir dados iniciais
 	 */
 	private class botaoInserirDadosListener implements ActionListener {
 
@@ -504,7 +547,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 					campeonatoAtual.setNome("Desafio Genius");
 				}
 
-				for (int i = 0; i < tamanhoLista; i++) {
+				for (int i = 0; i < campeonatoAtual.getQuantidadeJogadores(); i++) {
 					String nomeJogador = nomesJogadores.get(i).getText();
 					System.out.println("nome jogador " + nomeJogador);
 					if (nomeJogador != null && !nomeJogador.isEmpty()) {
@@ -515,15 +558,144 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 					System.out.println("apelido jogador " + apelidoJogador);
 					if (apelidoJogador != null && !apelidoJogador.isEmpty()) {
 						campeonatoAtual.getJogador(i).setApelido(apelidoJogador);
-					}				
-				}		
+					}
+				}
+				nomesJogadores.clear();
+				apelidosJogadores.clear();
 				alertaJogoTerminado(false);
 				frameInserirDados.setVisible(false);
 				iniciarCampeonato();
 			}
 		}
 	}
+	
+	/**
+	 * Listener do botao de salvar/carregar dados de um campeonato
+	 */
+	private class botaoSalvarCarregarListener implements ActionListener {
+		private botaoSalvarCarregarListener() {}
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JFrame frame = new JFrame();
+			frame.setSize(220, 50);
+			JFileChooser seletorArquivo = new JFileChooser();
+			seletorArquivo.setFileFilter(new FileNameExtensionFilter("GENIUS campeonato", "genius"));
+			if (botaoSalvarCarregar.getText() == "CARREGAR CAMPEONATO") {
+				seletorArquivo.setDialogTitle("Especifique o arquivo que deseja abrir");
+				int opcaoSelecionada = seletorArquivo.showOpenDialog(frame);
+				// somente avançamos se foi selecionado um arquivo válido
+				if (opcaoSelecionada != JFileChooser.APPROVE_OPTION) return;
 
+				// conterá dados necessários para continuar o campeonato (indexJogadorAtual, moduloVelocidade, offsetFase)
+				String primeiraLinha = "";
+
+				try {
+					File arquivoSelecionado = seletorArquivo.getSelectedFile();
+					FileInputStream arquivoEntrada = new FileInputStream(arquivoSelecionado.getAbsoluteFile());
+
+					// le primeira linha (ou seja, até que cheguemos no \n)
+					for (int byteChar = arquivoEntrada.read(); byteChar != '\n'; byteChar = arquivoEntrada.read()) {
+						primeiraLinha += (char) byteChar; // convertendo para tipo caracter
+					}
+
+					ObjectInputStream entrada = new ObjectInputStream(arquivoEntrada);
+					campeonatoAtual = (Campeonato) entrada.readObject();
+					entrada.close();
+					entrada.close();
+				} catch (IOException excecao) {
+					excecao.printStackTrace();
+					JOptionPane.showMessageDialog(null,
+							"Falha! Arquivo inválido.", "Erro ao Carregar Campeonato", JOptionPane.ERROR_MESSAGE);
+					return;
+				} catch (ClassNotFoundException excecao) {
+					excecao.printStackTrace();
+					JOptionPane.showMessageDialog(null,
+							"Falha! Arquivo inválido.", "Erro ao Carregar Campeonato", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+                // separando a primeira linha para pegar os dados desejados
+				String[] valores = primeiraLinha.split(" ");
+				moduloVelocidade = Integer.parseInt(valores[1]);
+				offsetFase = Integer.parseInt(valores[2]);
+				indexJogadorAtual = Integer.parseInt(valores[0]);
+				
+				botaoPrincipal.setText("PAUSAR");
+				botaoSalvarCarregar.setText("SALVAR CAMPEONATO");
+
+				// quando salvo, o jogador atual teve seu tempo pausado, logo
+				// devemos retomar a jogada (sair do estado pausado)
+				campeonatoAtual.getJogador(indexJogadorAtual).retomaJogada();
+				temporizador.start();
+				jogoRodando = true;
+				alertaJogoTerminado(false);
+				toques = 0; // zera contador de atualizações da tela
+				iniciarUmaSequencia();
+			} else {
+				// utilizado para salvar o estado do jogoRodando (evitar que o jogo continue
+				// enquanto estiver na tela de salvamento)
+				boolean jogoRodandoEstado = jogoRodando;
+				campeonatoAtual.getJogador(indexJogadorAtual).pausaJogada();
+				jogoRodando = false;
+
+				seletorArquivo.setDialogTitle("Especifique o caminho do arquivo que deseja salvar");
+				int opcaoSelecionada = seletorArquivo.showSaveDialog(frame);
+				// somente avançamos se foi selecionado um arquivo válido
+				if (opcaoSelecionada != JFileChooser.APPROVE_OPTION) return;
+
+				try {
+					String caminhoArquivoSelecionado = seletorArquivo.getSelectedFile().getAbsolutePath();
+					// caso o usuário não adicionar .genius no final do nome do arquivo, vamos adicioná-lo
+					if (!caminhoArquivoSelecionado.endsWith(".genius")) {
+						caminhoArquivoSelecionado += ".genius";
+					}
+					FileOutputStream arquivoSaida = new FileOutputStream(caminhoArquivoSelecionado);
+
+					// usado para salvar dados importantes para o continuamento do campeonato na carga
+					String primeiraLinha = indexJogadorAtual + " " + moduloVelocidade + " " + offsetFase + "\n";
+					arquivoSaida.write(primeiraLinha.getBytes());
+
+					ObjectOutputStream escritorSaida = new ObjectOutputStream(arquivoSaida);
+					escritorSaida.writeObject(campeonatoAtual);
+					escritorSaida.close();
+					arquivoSaida.close();
+				} catch (IOException excecao) {
+					excecao.printStackTrace();
+					JOptionPane.showMessageDialog(null,
+						"Falha! " + excecao.getMessage(), "Erro ao Salvar Campeonato", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
+				JOptionPane.showConfirmDialog(null,
+						"Sucesso, arquivo salvo!", "Salvar Campeonato", JOptionPane.DEFAULT_OPTION);
+
+				// retornando ao estado anterior do jogo
+				campeonatoAtual.getJogador(indexJogadorAtual).retomaJogada();
+				jogoRodando = jogoRodandoEstado;
+			}
+		}
+	}
+
+	/**
+	 * Listener do botão de ajuda
+	 */
+	private class botaoAjudaListener implements ActionListener {
+		private botaoAjudaListener() {}
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JOptionPane.showMessageDialog(null,"O GENIUS é um jogo de memória visual e sonora, com três níveis de velocidade\n"
+					+ "(normal, lento e rápido) e de dificuldade (fácil, médio e difícil).\n\n" 
+					+ "O jogo vai gerar sequências que o jogador deve seguir. Cada cor tem um som\n"
+					+ "correspondente. Você precisa clicar nelas em sequência.\n\n"
+					+ "A cada jogada o GENIUS acende uma luz e emite um som a mais, formando\n"
+					+ "uma sequência diferente cada vez maior que deve ser repetida pelo jogador.\n\n"
+					+ "Se você errar a sequência, a sua rodada termina e vai para o próximo jogador,\n"
+					+ "se não houver mais jogadores o jogo termina.\n\n"
+					+ "O jogo pode ser pausado e retomado do mesmo ponto e também é possível salvar\n"
+					+ "o estado atual do campeonato em um arquivo e carregá-lo posteriormente.\n\n"
+					+ "Trabalho Avaliativo da disciplina Programação Orientada a Objetos.\n\n"
+					+ "Discentes: George Neres, Jean Andrade, Lucas Fonsêca e Vitor Emanuel", "Ajuda", JOptionPane.DEFAULT_OPTION);
+			}
+		}           
 	// Mouse Listeners:
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -549,7 +721,8 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 				// Se o jogador Atual ja tiver passado uma ou mais fases, iniciamos somente uma sequencia
 				// com a quantidade equivalente a fase, caso for a primeira vez que o jogador estiver jogando
 				// iniciamos a jogada dele
-				if (campeonatoAtual.getJogador(indexJogadorAtual).getFaseAtual() > 0) {
+				if ((campeonatoAtual.getJogador(indexJogadorAtual).getFaseAtual() - offsetFase) > 0) {
+					campeonatoAtual.getJogador(indexJogadorAtual).retomaJogada();
 					iniciarUmaSequencia();
 				} else {
 					iniciarJogada();
@@ -560,6 +733,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 					JOptionPane.showConfirmDialog(null, 
 							"Continuar jogo em fase extra.", "Ocorreu um empate!!!", JOptionPane.DEFAULT_OPTION);
 					// recomeçando as sequencias
+					campeonatoAtual.getJogador(indexJogadorAtual).retomaJogada();
 					iniciarUmaSequencia();
 				} else {
 					jogoTerminado = true;
