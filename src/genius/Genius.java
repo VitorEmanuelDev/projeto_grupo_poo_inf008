@@ -696,6 +696,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 					JOptionPane.showConfirmDialog(null, 
 							"Continuar jogo em fase extra.", "Ocorreu um empate!!!", JOptionPane.DEFAULT_OPTION);
 					// recomeçando as sequencias
+					campeonatoAtual.getJogador(indexJogadorAtual).retomaJogada();
 					iniciarUmaSequencia();
 				} else {
 					jogoTerminado = true;
