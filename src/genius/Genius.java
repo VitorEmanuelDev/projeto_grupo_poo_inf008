@@ -603,12 +603,12 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 				} catch (IOException excecao) {
 					excecao.printStackTrace();
 					JOptionPane.showConfirmDialog(null, 
-							"Falha! " + excecao.getMessage(), "Erro ao Carregar Campeonato", JOptionPane.DEFAULT_OPTION);
+							"Falha! Arquivo inválido.", "Erro ao Carregar Campeonato", JOptionPane.DEFAULT_OPTION);
 					return;
 				} catch (ClassNotFoundException excecao) {
 					excecao.printStackTrace();
 					JOptionPane.showConfirmDialog(null, 
-							"Falha! Arquivo inválido", "Erro ao Carregar Campeonato", JOptionPane.DEFAULT_OPTION);
+							"Falha! Arquivo inválido.", "Erro ao Carregar Campeonato", JOptionPane.DEFAULT_OPTION);
 					return;
 				}
                 // separando a primeira linha para pegar os dados desejados
