@@ -331,7 +331,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 				indexJogadorErrou = campeonatoAtual.getQuantidadeJogadores() - 1;
 			}
 
-			g.drawString(campeonatoAtual.getJogador(indexJogadorErrou).getNome() + " errou!!!", (LARGURA/2) - 80,  550);
+			g.drawString(campeonatoAtual.getJogador(indexJogadorErrou).getApelido() + " errou!!!", (LARGURA/2) - 80,  550);
 		}
 	}
 
@@ -541,7 +541,9 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 					System.out.println("apelido jogador " + apelidoJogador);
 					if (apelidoJogador != null && !apelidoJogador.isEmpty()) {
 						campeonatoAtual.getJogador(i).setApelido(apelidoJogador);
-					}				
+					}
+					nomesJogadores.clear();
+					apelidosJogadores.clear();
 				}
 				alertaJogoTerminado(false);
 				frameInserirDados.setVisible(false);
