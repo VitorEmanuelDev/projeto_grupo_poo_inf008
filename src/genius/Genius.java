@@ -685,6 +685,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 				// com a quantidade equivalente a fase, caso for a primeira vez que o jogador estiver jogando
 				// iniciamos a jogada dele
 				if ((campeonatoAtual.getJogador(indexJogadorAtual).getFaseAtual() - offsetFase) > 0) {
+					campeonatoAtual.getJogador(indexJogadorAtual).retomaJogada();
 					iniciarUmaSequencia();
 				} else {
 					iniciarJogada();
