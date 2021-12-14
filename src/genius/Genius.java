@@ -28,6 +28,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	private JButton botaoPrincipal;
 	private JButton botaoInserirDados;
 	private JButton botaoSalvarCarregar;
+	private JButton botaoAjuda;
 	private JComboBox<String> comboBoxDificuldade;
 	private JComboBox<String> comboBoxVelocidade;
 	private Integer moduloVelocidade;
@@ -85,6 +86,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		inicializarQuadradosDeCores();
 		criarBotaoPrincipal();
 		criarBotaoSalvarCarregarCampeonato();
+		criarBotaoAjuda();
 		repaint();
 	}
 
@@ -262,6 +264,19 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		botaoSalvarCarregar.setBounds(11, 10, LARGURA_BOTAO_PRINCIPAL + 90, ALTURA_BOTAO_PRINCIPAL);
 		botaoSalvarCarregar.addActionListener(new botaoSalvarCarregarListener());
 		add(botaoSalvarCarregar);
+	}
+	/**
+	 * Cria o botao ajuda
+	 */
+	private void criarBotaoAjuda() {
+		JButton botaoAjuda = new JButton("AJUDA");
+		botaoAjuda.setBackground(Color.BLACK);
+		botaoAjuda.setForeground(Color.WHITE);
+		botaoAjuda.setFocusPainted(false);
+		botaoAjuda.setFont(new Font("Comic", Font.BOLD, 10));
+		botaoAjuda.setBounds(475, 10, LARGURA_BOTAO_PRINCIPAL, ALTURA_BOTAO_PRINCIPAL);
+		botaoAjuda.addActionListener(new botaoAjudaListener());
+		add(botaoAjuda);
 	}
 
 	/**
@@ -596,8 +611,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 							"Falha! Arquivo invÃ¡lido", "Erro ao Carregar Campeonato", JOptionPane.DEFAULT_OPTION);
 					return;
 				}
-
-				// separando a primeira linha para pegar os dados desejados
+                // separando a primeira linha para pegar os dados desejados
 				String[] valores = primeiraLinha.split(" ");
 				moduloVelocidade = Integer.parseInt(valores[1]);
 				offsetFase = Integer.parseInt(valores[2]);
@@ -658,7 +672,29 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 	}
-
+	/**
+	 * Listener class to the Main button
+	 */
+	private class botaoAjudaListener implements ActionListener {
+		private botaoAjudaListener() {}
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JOptionPane.showMessageDialog(null,"O GENIUS é um jogo de memória visual e sonora, com três níveis de velocidade\n"
+					+ "(normal, lento e rápido), e de dificuldade (fácil, médio, difícil).\n\n" 
+					+ "Cada cor tem um som correspondente, o jogo vai gerar sequências que o\n"
+					+ "jogador deve seguir. Você precisa clicar em cima dela (repetir a sequência).\n\n"
+					+ "A cada jogada, o GENIUS acende uma luz e emite um som a mais, formando\n"
+					+ "uma sequência diferente cada vez maior, deve ser repetida pelo jogador.\n\n"
+					+ "Se você errar a repetição, a sua rodada termina e vai para o próximo jogador,\n"
+					+ "se não houver mais jogadores, o jogo termina.\n\n"
+					+ "O jogo pode ser pausado e retomado posteriormente do mesmo ponto e caso,\n"
+					+ "queira pode salvar o estado atual do campeonato em um arquivo e carregá-lo.\n\n"
+					
+					+ "Trabalho Avaliativo da disciplina Programação Orientada a Objetos.\n\n"
+					+ "Discentes: George Neres, Jean Andrade, Lucas Fonsêca e Vitor Emanuel"
+			);			
+			}
+		}           
 	// Mouse Listeners:
 	@Override
 	public void mousePressed(MouseEvent e) {
