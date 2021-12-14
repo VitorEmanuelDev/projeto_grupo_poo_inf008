@@ -8,21 +8,19 @@ import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class Genius extends JPanel implements ActionListener, MouseListener {
 
+	private static final long serialVersionUID = 3221282515071077635L;
 	private Campeonato campeonatoAtual;
 	private List<JTextField> nomesJogadores = new ArrayList<JTextField>();
 	private List<JTextField> apelidosJogadores = new ArrayList<JTextField>();
