@@ -2,8 +2,12 @@ package genius;
 
 import java.util.List;
 
-public class Jogador {
+public class Jogador implements java.io.Serializable {
 
+	/**
+	 * Representação de um Jogador, este contém um nome, apelido e placar
+	 */
+	private static final long serialVersionUID = 4577235192388939683L;
 	private Placar placar;
 	private String nome;
 	private String apelido;

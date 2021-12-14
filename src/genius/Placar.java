@@ -8,8 +8,13 @@ import java.util.List;
 /**
  * Representa o placar
  */
-public class Placar {
+public class Placar implements java.io.Serializable {
 
+	/**
+	 * Representação do placar de um Jogador, contém a fase e pontuação atual,
+	 * além de também ter um contador de tempo de jogadas
+	 */
+	private static final long serialVersionUID = -2516303699424558751L;
 	private Integer fase;
 	private Integer pontuacao;
 	private Instant instanteFaseAtual;
