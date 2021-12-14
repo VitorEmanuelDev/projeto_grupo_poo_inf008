@@ -265,16 +265,17 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		botaoSalvarCarregar.addActionListener(new botaoSalvarCarregarListener());
 		add(botaoSalvarCarregar);
 	}
+
 	/**
 	 * Cria o botao ajuda
 	 */
 	private void criarBotaoAjuda() {
-		JButton botaoAjuda = new JButton("AJUDA");
+		botaoAjuda = new JButton("AJUDA");
 		botaoAjuda.setBackground(Color.BLACK);
 		botaoAjuda.setForeground(Color.WHITE);
 		botaoAjuda.setFocusPainted(false);
 		botaoAjuda.setFont(new Font("Comic", Font.BOLD, 10));
-		botaoAjuda.setBounds(475, 10, LARGURA_BOTAO_PRINCIPAL, ALTURA_BOTAO_PRINCIPAL);
+		botaoAjuda.setBounds(487, 10, LARGURA_BOTAO_PRINCIPAL, ALTURA_BOTAO_PRINCIPAL);
 		botaoAjuda.addActionListener(new botaoAjudaListener());
 		add(botaoAjuda);
 	}
@@ -591,7 +592,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 					File arquivoSelecionado = seletorArquivo.getSelectedFile();
 					FileInputStream arquivoEntrada = new FileInputStream(arquivoSelecionado.getAbsoluteFile());
 
-					// le primeira linha (ou seja atÃ© que cheguemos no \n)
+					// le primeira linha (ou seja, atÃ© que cheguemos no \n)
 					for (int byteChar = arquivoEntrada.read(); byteChar != '\n'; byteChar = arquivoEntrada.read()) {
 						primeiraLinha += (char) byteChar; // convertendo para tipo caracter
 					}
@@ -602,13 +603,13 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 					entrada.close();
 				} catch (IOException excecao) {
 					excecao.printStackTrace();
-					JOptionPane.showConfirmDialog(null, 
-							"Falha! Arquivo invÃ¡lido.", "Erro ao Carregar Campeonato", JOptionPane.DEFAULT_OPTION);
+					JOptionPane.showMessageDialog(null,
+							"Falha! Arquivo invÃ¡lido.", "Erro ao Carregar Campeonato", JOptionPane.ERROR_MESSAGE);
 					return;
 				} catch (ClassNotFoundException excecao) {
 					excecao.printStackTrace();
-					JOptionPane.showConfirmDialog(null, 
-							"Falha! Arquivo invÃ¡lido.", "Erro ao Carregar Campeonato", JOptionPane.DEFAULT_OPTION);
+					JOptionPane.showMessageDialog(null,
+							"Falha! Arquivo invÃ¡lido.", "Erro ao Carregar Campeonato", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
                 // separando a primeira linha para pegar os dados desejados
@@ -658,12 +659,12 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 					arquivoSaida.close();
 				} catch (IOException excecao) {
 					excecao.printStackTrace();
-					JOptionPane.showConfirmDialog(null, 
-						"Falha! " + excecao.getMessage(), "Erro ao Salvar Campeonato", JOptionPane.DEFAULT_OPTION);
+					JOptionPane.showMessageDialog(null,
+						"Falha! " + excecao.getMessage(), "Erro ao Salvar Campeonato", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 
-				JOptionPane.showConfirmDialog(null, 
+				JOptionPane.showConfirmDialog(null,
 						"Sucesso, arquivo salvo!", "Salvar Campeonato", JOptionPane.DEFAULT_OPTION);
 
 				// retornando ao estado anterior do jogo
@@ -672,27 +673,26 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 	}
+
 	/**
-	 * Listener class to the Main button
+	 * Listener do botÃ£o de ajuda
 	 */
 	private class botaoAjudaListener implements ActionListener {
 		private botaoAjudaListener() {}
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JOptionPane.showMessageDialog(null,"O GENIUS é um jogo de memória visual e sonora, com três níveis de velocidade\n"
-					+ "(normal, lento e rápido), e de dificuldade (fácil, médio, difícil).\n\n" 
-					+ "Cada cor tem um som correspondente, o jogo vai gerar sequências que o\n"
-					+ "jogador deve seguir. Você precisa clicar em cima dela (repetir a sequência).\n\n"
-					+ "A cada jogada, o GENIUS acende uma luz e emite um som a mais, formando\n"
-					+ "uma sequência diferente cada vez maior, deve ser repetida pelo jogador.\n\n"
-					+ "Se você errar a repetição, a sua rodada termina e vai para o próximo jogador,\n"
-					+ "se não houver mais jogadores, o jogo termina.\n\n"
-					+ "O jogo pode ser pausado e retomado posteriormente do mesmo ponto e caso,\n"
-					+ "queira pode salvar o estado atual do campeonato em um arquivo e carregá-lo.\n\n"
-					
-					+ "Trabalho Avaliativo da disciplina Programação Orientada a Objetos.\n\n"
-					+ "Discentes: George Neres, Jean Andrade, Lucas Fonsêca e Vitor Emanuel"
-			);			
+			JOptionPane.showMessageDialog(null,"O GENIUS Ã© um jogo de memÃ³ria visual e sonora, com trÃªs nÃ­veis de velocidade\n"
+					+ "(normal, lento e rÃ¡pido) e de dificuldade (fÃ¡cil, mÃ©dio e difÃ­cil).\n\n" 
+					+ "O jogo vai gerar sequÃªncias que o jogador deve seguir. Cada cor tem um som\n"
+					+ "correspondente. VocÃª precisa clicar nelas em sequÃªncia.\n\n"
+					+ "A cada jogada o GENIUS acende uma luz e emite um som a mais, formando\n"
+					+ "uma sequÃªncia diferente cada vez maior que deve ser repetida pelo jogador.\n\n"
+					+ "Se vocÃª errar a sequÃªncia, a sua rodada termina e vai para o prÃ³ximo jogador,\n"
+					+ "se nÃ£o houver mais jogadores o jogo termina.\n\n"
+					+ "O jogo pode ser pausado e retomado do mesmo ponto e tambÃ©m Ã© possÃ­vel salvar\n"
+					+ "o estado atual do campeonato em um arquivo e carregÃ¡-lo posteriormente.\n\n"
+					+ "Trabalho Avaliativo da disciplina ProgramaÃ§Ã£o Orientada a Objetos.\n\n"
+					+ "Discentes: George Neres, Jean Andrade, Lucas FonsÃªca e Vitor Emanuel", "Ajuda", JOptionPane.DEFAULT_OPTION);
 			}
 		}           
 	// Mouse Listeners:
