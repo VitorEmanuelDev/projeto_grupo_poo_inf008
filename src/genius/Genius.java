@@ -186,16 +186,17 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		}
 
 		String[] colunas = new String[] {
-				"Nome", "Apelido", "Pontuacao", "Mais rapida (s)", "Tempo total"
+				"Nome", "Apelido", "Fase", "Pontuacao", "Mais rapida (s)", "Tempo total"
 		};
-		Object[][] dados = new Object[campeonatoAtual.getQuantidadeJogadores()][5];
+		Object[][] dados = new Object[campeonatoAtual.getQuantidadeJogadores()][6];
 
 		for (int i = 0; i < campeonatoAtual.getQuantidadeJogadores(); i++) {
 			dados[i][0] = campeonatoAtual.getJogador(i).getNome();
 			dados[i][1] = campeonatoAtual.getJogador(i).getApelido();
-			dados[i][2] = campeonatoAtual.getJogador(i).getPontuacao();
-			dados[i][3] = listaJogadaMaisRapida[i];
-			dados[i][4] = somaTotalTempo[i];
+			dados[i][2] = campeonatoAtual.getJogador(i).getFaseAtual();
+			dados[i][3] = campeonatoAtual.getJogador(i).getPontuacao();
+			dados[i][4] = listaJogadaMaisRapida[i];
+			dados[i][5] = somaTotalTempo[i];
 		}
 
 		JTable tabela = new JTable(dados, colunas);
