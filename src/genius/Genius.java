@@ -28,6 +28,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	private QuadradosCores[] botoesCores;
 	private Timer temporizador;
 	private Sons som = new Sons();
+	private int offsetFase;
 
 	private AudioClip[] arraySonoro = {som.getAudioVerde(),som.getAudioVermelho(),som.getAudioAmarelo(),som.getAudioAzul()};
 
@@ -161,6 +162,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		for (int i = 0; i < tamanhoLista; i++) {
 			Long jogadaMaisRapida = Long.MAX_VALUE;
 			somaTotalTempo[i] = 0L;
+			listaJogadaMaisRapida[i] = 0L;
 			for (int j = 0; j < campeonatoAtual.getJogador(i).getTempoJogadas().size(); j++) {
 				long atual = campeonatoAtual.getJogador(i).getTempoJogada(j);
 				somaTotalTempo[i] += atual;
@@ -292,7 +294,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		if (jogoRodando) {
 			g.setFont(new Font("Comic", Font.BOLD, 14));
 			g.drawString("Jogador: " + campeonatoAtual.getJogador(indexJogadorAtual).getApelido(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET - 20);
-			g.drawString("Fase:  " + campeonatoAtual.getJogador(indexJogadorAtual).getFaseAtual(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
+			g.drawString("Fase:  " + (campeonatoAtual.getJogador(indexJogadorAtual).getFaseAtual() - offsetFase), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
 			g.drawString("Pontos totais: " + campeonatoAtual.getJogador(indexJogadorAtual).getPontuacao()
 					+ " (+" + campeonatoAtual.getJogador(indexJogadorAtual).ultimaPontuacaoAcrescentada() + ")",
 					(LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 20);
@@ -359,6 +361,12 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		} else {
 			moduloVelocidade = 30;
 		}
+		offsetFase = 0;
+		if (comboBoxDificuldade.getSelectedIndex() == 1) {
+			offsetFase = 2;
+		} else if (comboBoxDificuldade.getSelectedIndex() == 2) {
+			offsetFase = 4;
+		}
 		temporizador.start();
 		botaoPrincipal.setText("PAUSAR");
 		jogoRodando = true;
@@ -370,6 +378,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	 * Iniciar o jogo pelo temporizador, reinicializando o placar e iniciando uma sequencia
 	 */
 	private void iniciarJogada() {
+		campeonatoAtual.getJogador(indexJogadorAtual).setFaseAtual(offsetFase);
 		campeonatoAtual.getJogador(indexJogadorAtual).avancaFase();
 		iniciarUmaSequencia();
 	}
@@ -378,13 +387,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	 * Iniciar um sequencia com o numero piscadas equivalente a fase do jogador
 	 */
 	private void iniciarUmaSequencia() {
-		int numeroSequencias = campeonatoAtual.getJogador(indexJogadorAtual).getFaseAtual();
-		if (comboBoxDificuldade.getSelectedIndex() == 1) {
-			numeroSequencias += 2;
-		} else if (comboBoxDificuldade.getSelectedIndex() == 2) {
-			numeroSequencias += 4;
-		}
-		sequenciaAtual = new SequenciaDeCores(numeroSequencias);
+		sequenciaAtual = new SequenciaDeCores(campeonatoAtual.getJogador(indexJogadorAtual).getFaseAtual());
 		indiceDePadroesDoJogo = 0;
 		indiceDePadroesDoJogador = 0;
 		mostrarSequencia = true;
@@ -549,7 +552,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 				// Se o jogador Atual ja tiver passado uma ou mais fases, iniciamos somente uma sequencia
 				// com a quantidade equivalente a fase, caso for a primeira vez que o jogador estiver jogando
 				// iniciamos a jogada dele
-				if (campeonatoAtual.getJogador(indexJogadorAtual).getFaseAtual() > 0) {
+				if ((campeonatoAtual.getJogador(indexJogadorAtual).getFaseAtual() - offsetFase) > 0) {
 					iniciarUmaSequencia();
 				} else {
 					iniciarJogada();

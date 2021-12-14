@@ -46,6 +46,10 @@ public class Jogador {
 		return placar.getFase();
 	}
 
+	public void setFaseAtual(int novaFase) {
+		placar.setFase(novaFase);
+	}
+
 	public void pausaJogada() {
 		placar.pausaJogada();
 	}

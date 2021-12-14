@@ -51,7 +51,7 @@ public class Placar {
 	 */
 	public void proximaFase() {
 		fase++;
-		if (fase != 1) {
+		if (instanteFaseAtual != null) {
 			tempoJogadas.add(Duration.between(instanteFaseAtual, Instant.now()).getSeconds() + tempoPrePausa);
 			tempoPrePausa = 0L;
 			pontuacao += fase;
@@ -64,6 +64,10 @@ public class Placar {
 	 */
 	public Integer getFase() {
 		return fase;
+	}
+
+	public void setFase(int novaFase) {
+		fase = novaFase;
 	}
 
 	/**
@@ -90,7 +94,9 @@ public class Placar {
 	}
 
 	public Integer ultimaPontuacaoAcrescentada() {
-		if (fase != 1) {
+		// somente vamos calcular a ultima pontuacao acrescentada, caso o
+		// jogador tenho jogado ao menos uma vez
+		if (!tempoJogadas.isEmpty()) {
 			int ultimaPontuacao = fase;
 			for (int i = 1; i < fase; i++) {
 				ultimaPontuacao += (fase - 1) * 10;
