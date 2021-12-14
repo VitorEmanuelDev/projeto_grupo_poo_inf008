@@ -21,6 +21,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	private List<JTextField> apelidosJogadores = new ArrayList<JTextField>();
 	private SequenciaDeCores sequenciaAtual;
 	private JButton botaoPrincipal;
+	private JButton botaoAjuda;
 	private JButton botaoInserirDados;
 	private JComboBox<String> comboBoxDificuldade;
 	private JComboBox<String> comboBoxVelocidade;
@@ -74,6 +75,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 	public Genius() {
 		criarFrame();
 		criarBotaoPrincipal();
+		criarBotaoAjuda();
 		botoesCores = new QuadradosCores[NUM_QUADRADOS];
 		temporizador = new Timer(TEMPORIZADOR_DELAY, this);
 		inicializarQuadradosDeCores();
@@ -223,6 +225,22 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
+	/**
+	 * Cria o botao ajuda
+	 */
+	private void criarBotaoAjuda() {
+		JButton botaoAjuda = new JButton("AJUDA");
+		botaoAjuda.setBackground(Color.BLACK);
+		botaoAjuda.setForeground(Color.WHITE);
+		botaoAjuda.setFocusPainted(false);
+		botaoAjuda.setFont(new Font("Comic", Font.BOLD, 10));
+		int offset_x = 481;
+		int offset_y = 10;
+		botaoAjuda.setBounds(offset_x, offset_y, LARGURA_BOTAO_PRINCIPAL, ALTURA_BOTAO_PRINCIPAL);
+		botaoAjuda.addActionListener(new botaoAjudaListener());
+		setLayout(null);
+		add(botaoAjuda);
+	}
 
 	/**
 	 * Cria o botao principal
@@ -272,7 +290,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 		super.paintComponent(g);
 		paint((Graphics2D) g);
 	}
-
+     
 	/**
 	 * Paint the game's graphics
 	 * @param forma2D     2D graphics context
@@ -455,7 +473,33 @@ public class Genius extends JPanel implements ActionListener, MouseListener{
 			botoesCores[i].setPiscada(bool);
 		}
 	}
-
+	/**
+	 * Listener class to the Main button
+	 */
+	private class botaoAjudaListener implements ActionListener {
+		private botaoAjudaListener() {}
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JOptionPane.showMessageDialog(null,"                Instruções\n\n"
+					+ " A ideia do jogo é que vários botões coloridos pisquem\n"
+					+ " em alguma sequência, e o usuário deve clicar nos botões\n"
+					+ " nessa mesma sequência, com um novo flash sendo adicionado\n"
+					+ " à sequência no início de cada rodada. Nessa implementação,\n"
+					+ " haverá quatro botões, alguns dos quais piscarão em uma\n" 
+					+ " sequência aleatória no início de cada rodada. Em seguida\n" 
+					+ " o usuário deve clicar nos botões na mesma ordem em que \n" 
+					+ " piscaram. Então, para cada rodada subseqüente, mais um \n" 
+					+ " de botão é adicionado ao final dessa sequência. O jogador\n" 
+					+ " ao clicar em um botão que está fora de ordem e sua pontuação\n\n"
+					+ " Existem três níveis de jogo: fácil, médio e difícil.\n\n"
+					+ "  - Fácil: Começa na primeira fase com uma sequência de um flash\n"
+					+ "  - Médio: Começa na primeira fase com uma seqência de 3 flashes\n"
+					+ "  - Difícil: Começa na primeira fase com uma seqência de 5 flashes\n\n"
+					+ ""
+					+ "    Existem três níveis de velocidade: normal, rápido e lento."
+			);			
+			}
+		}
 	/**
 	 * Listener class to the Main button
 	 */
