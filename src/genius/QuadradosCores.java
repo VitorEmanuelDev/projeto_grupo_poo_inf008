@@ -3,22 +3,22 @@ package genius;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-/**
- * Representa um quadradona GUI do jogo
- */
 public class QuadradosCores {
 
+	/**
+	 * Representa um quadrado com determinada cor na interface do jogo
+	 */
     private Color corPrincipal;
     private int largura;
     private int altura;
     private int posicaoX;
     private int posicaoY;
     private boolean devePiscar;
-    private static boolean jogoTerminado; // TODO considerar remoção
+    private static boolean jogoTerminado;
     private static Color corJogoTerminado = new Color(30, 30, 30);
 
     /**
-     * Cria um quadrado com uma determinada cor principal, tamanho e posicao 
+     * Cria um quadrado com uma determinada cor principal, posição e dimensão
      * @param corPrincipal    cor principal do quadrado
      * @param largura         largura do quadrado
      * @param altura          altura do quadrado
@@ -37,23 +37,23 @@ public class QuadradosCores {
 
     /**
      * Desenha a corPrincipal do quadrado sendo mostrado
-     * @param g     contexto no qual sera desenhado
+     * @param grafico     contexto no qual será desenhado
      */
-    public void desenharColorirQuadrado(Graphics2D g) {
+    public void desenharColorirQuadrado(Graphics2D grafico) {
         if (jogoTerminado) {
-            g.setColor(corJogoTerminado);
+            grafico.setColor(corJogoTerminado);
         } else if (devePiscar) {
-            g.setColor(corPrincipal);
+            grafico.setColor(corPrincipal);
         } else {
-            g.setColor(corPrincipal.darker().darker());
+            grafico.setColor(corPrincipal.darker().darker());
         }
-        g.fillRect(posicaoX, posicaoY, largura, altura);
+        grafico.fillRect(posicaoX, posicaoY, largura, altura);
     }
 
     /**
      * @param x     x abcissa
      * @param y     y ordenada
-     * @return      true se o clique estiver dentro das coordenadas do quadrado
+     * @return      true se o clique estiver dentro das coordenadas do quadrado, false caso contrário
      */
     public boolean estaDentroDasCoordenadas(int x, int y) {
         if (x < posicaoX || y < posicaoY) {
@@ -66,7 +66,7 @@ public class QuadradosCores {
     }
 
     /**
-     * @param bool      mostra se o quadrado deve piscar ou nao
+     * @param bool      mostra se o quadrado deve piscar ou não
      */
     public void setPiscada(boolean bool) {
         devePiscar = bool;

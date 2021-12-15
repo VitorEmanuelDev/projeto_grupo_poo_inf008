@@ -2,7 +2,6 @@ package genius;
 
 import java.applet.Applet;
 import java.applet.AudioClip;
-import java.io.File;
 import java.net.URL;
 
 public class Sons {

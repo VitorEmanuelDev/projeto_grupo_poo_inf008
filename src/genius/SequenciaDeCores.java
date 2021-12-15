@@ -2,16 +2,17 @@ package genius;
 
 import java.util.Random;
 
-/**
- * Representa uma sequencia de inteiros
- */
 public class SequenciaDeCores {
 
+	/**
+	 * Representa uma sequência de inteiros que representam os botões de cores do jogo
+	 */
 	private int quantidade;
 	private int[] sequencia;
 	private Random randomizador;
+
 	/**
-	 * Cria uma nova sequencia de cores com inteiros aleatorios para qualquer quantidade
+	 * Cria uma nova sequência de cores com inteiros aleatórios para quaisquer números de sequência
 	 * @param quantidade   quantidade da sequencia
 	 */
 	public SequenciaDeCores(int quantidade) {
@@ -22,7 +23,7 @@ public class SequenciaDeCores {
 	}
 
 	/**
-	 * Cria uma sequencia aleatoria de cores
+	 * Cria uma sequência aleatória de cores
 	 */
 	private void criarSequencia() {
 		for (int i = 0; i < quantidade; i++) {
@@ -31,9 +32,9 @@ public class SequenciaDeCores {
 	}
 
 	/**
-	 * Pegar elemento da sequencia num indice especifico
-	 * @param indice     indice na sequencia
-	 * @return  elemento da sequencia em determinado indice. Se o indice for invalido, retorna -1
+	 * Pegar elemento da sequência num indice específico
+	 * @param indice     indice na sequência
+	 * @return  elemento da sequencia em determinado indice, se o indice for inválido retorna -1
 	 */
 	public int getIndice(int indice) {
 		if (indice < 0 || indice >= quantidade) {
@@ -43,7 +44,7 @@ public class SequenciaDeCores {
 	}
 
 	/**
-	 * @return quantidade da sequencia
+	 * @return quantidade da sequência
 	 */
 	public int getQuantidade() {
 		return quantidade;
