@@ -431,6 +431,8 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	 * Inicia a fase do jogador baseado na dificuldade e a sequência de cores para a jogada
 	 */
 	private void iniciarJogada() {
+		// Definimos a fase atual baseado na dificuldade selecionada, e posteriormente,
+		// subtraimos esse valor para obtermos a numeração da fase adequada
 		campeonatoAtual.getJogador(indexJogadorAtual).setFaseAtual(offsetFase);
 		campeonatoAtual.getJogador(indexJogadorAtual).avancaFase();
 		iniciarUmaSequencia();
