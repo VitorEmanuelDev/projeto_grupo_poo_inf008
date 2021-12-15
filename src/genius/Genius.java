@@ -602,7 +602,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 					ObjectInputStream entrada = new ObjectInputStream(arquivoEntrada);
 					campeonatoAtual = (Campeonato) entrada.readObject();
 					entrada.close();
-					entrada.close();
+					arquivoEntrada.close();
 				} catch (IOException excecao) {
 					excecao.printStackTrace();
 					JOptionPane.showMessageDialog(null,
