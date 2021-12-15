@@ -5,9 +5,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Representa o placar
- */
 public class Placar implements java.io.Serializable {
 
 	/**
@@ -22,7 +19,7 @@ public class Placar implements java.io.Serializable {
 	private List<Long> tempoJogadas;
 
 	/**
-	 * Construtor cria um novo placar
+	 * Construtor, cria um novo placar e zera os atributos
 	 */
 	public Placar() {
 		fase = 0;
@@ -45,14 +42,14 @@ public class Placar implements java.io.Serializable {
 	}
 
 	/**
-	 * Aumenta a pontuacao de acordo com o nivel
+	 * Aumenta a pontuação de acordo com o nível
 	 */
 	public void aumentarPontuacao() {
 		pontuacao += fase * 10;
 	}
 
 	/**
-	 * Incrementa a fase e atribui uma pontuacao
+	 * Incrementa a fase, atribui uma pontuação e adiciona tempo da jogada
 	 */
 	public void proximaFase() {
 		fase++;
@@ -71,25 +68,41 @@ public class Placar implements java.io.Serializable {
 		return fase;
 	}
 
+	/**
+	 * Modifica fase para novo valor
+	 * @param novaFase  novo valor a ser utilizado
+	 */
 	public void setFase(int novaFase) {
 		fase = novaFase;
 	}
 
 	/**
-	 * @return informa a pontuacao do jogador
+	 * @return informa a pontuação do jogador
 	 */
 	public Integer getPontuacao() {
 		return pontuacao;
 	}
 
+	/**
+	 * Retorna tempo em segundos de determinada fase
+	 * @param indexJogada   index do tempo de jogada
+	 * @return   tempo em segundos de determinada jogada
+	 */
 	public Long getTempoJogada(int indexJogada) {
 		return tempoJogadas.get(indexJogada);
 	}
 
+	/**
+	 * Retorna lista do tempo de todas as jogadas
+	 * @return  lista com tempo de todas as jogadas
+	 */
 	public List<Long> getTempoJogadas() {
 		return tempoJogadas;
 	}
 
+	/**
+	 * Pausa a jogada atual, temporariamente deixa de contar o tempo do jogador
+	 */
 	public void pausaJogada() {
 		if (instanteFaseAtual != null) {
 			tempoPrePausa += Duration.between(instanteFaseAtual, Instant.now()).getSeconds();
@@ -97,13 +110,20 @@ public class Placar implements java.io.Serializable {
 		}
 	}
 
+	/**
+	 * Retoma a jogada, voltando a contar o tempo do jogador
+	 */
 	public void retomaJogada() {
 		instanteFaseAtual = Instant.now();
 	}
 
+	/**
+	 * Calcula a pontuação da fase anterior e a retorna
+	 * @return   ultima pontuação acrescentada ao avançar a fase
+	 */
 	public Integer ultimaPontuacaoAcrescentada() {
-		// somente vamos calcular a ultima pontuacao acrescentada, caso o
-		// jogador tenho jogado ao menos uma vez
+		// somente vamos calcular a última pontuação acrescentada, caso o
+		// jogador tenha jogado ao menos uma vez
 		if (!tempoJogadas.isEmpty()) {
 			int ultimaPontuacao = fase;
 			for (int i = 1; i < fase; i++) {

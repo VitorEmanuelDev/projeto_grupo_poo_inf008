@@ -20,6 +20,9 @@ import java.util.List;
 
 public class Genius extends JPanel implements ActionListener, MouseListener {
 
+	/**
+	 * Classe principal do jogo, instância gráfica principal
+	 */
 	private static final long serialVersionUID = 3221282515071077635L;
 	private Campeonato campeonatoAtual;
 	private List<JTextField> nomesJogadores = new ArrayList<JTextField>();
@@ -69,7 +72,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	private boolean mostrarSequencia = false;
 
 
-	// Rodar jogo
+	// Roda jogo
 	public static void main(String[] args) throws InterruptedException{
 		@SuppressWarnings("unused")
 		Genius genius = new Genius();
@@ -200,7 +203,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < campeonatoAtual.getQuantidadeJogadores(); i++) {
 			dados[i][0] = campeonatoAtual.getJogador(i).getNome();
 			dados[i][1] = campeonatoAtual.getJogador(i).getApelido();
-			dados[i][2] = campeonatoAtual.getJogador(i).getFaseAtual();
+			dados[i][2] = campeonatoAtual.getJogador(i).getFaseAtual() - offsetFase;
 			dados[i][3] = campeonatoAtual.getJogador(i).getPontuacao();
 			dados[i][4] = listaJogadaMaisRapida[i];
 			dados[i][5] = somaTotalTempo[i];
@@ -246,7 +249,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Cria o botao principal
+	 * Cria o botão principal
 	 */
 	private void criarBotaoPrincipal() {
 		botaoPrincipal = new JButton("JOGAR");
@@ -260,7 +263,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Cria o botao de salvar/carregar campeonato
+	 * Cria o botão de salvar/carregar campeonato
 	 */
 	private void criarBotaoSalvarCarregarCampeonato() {
 		botaoSalvarCarregar = new JButton("CARREGAR CAMPEONATO");
@@ -274,7 +277,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Cria o botao ajuda
+	 * Cria o botão ajuda
 	 */
 	private void criarBotaoAjuda() {
 		botaoAjuda = new JButton("AJUDA");
@@ -288,9 +291,9 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Cria o botao para pop up de inserir dados
-	 * @param frame 
-	 * @param nomeCampeonato 
+	 * Cria o botão para popup de inserção de dados do campeonato
+	 * @param frame   instância gráfica onde o botão será adicionado
+	 * @param nomeCampeonato    instância de campo de texto para leitura do nome do campeonato
 	 */
 	private void criarBotaoInserirDados(JFrame frame, JTextField nomeCampeonato) {
 		botaoInserirDados = new JButton("INICIAR");
@@ -304,7 +307,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 *Inicializa os quadrados 
+	 * Inicializa os quadrados 
 	 */
 	private void inicializarQuadradosDeCores() {
 		botoesCores[0] = new QuadradosCores(Color.GREEN, LARGURA_QUADRADOS, ALTURA_QUADRADOS, 100, 105);
@@ -320,7 +323,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Pint os gráficos do jogo
+	 * Renderiza os itens gráficos do jogo
 	 * @param grafico     contexto de grafico 2D
 	 */
 	private void paint(Graphics2D grafico) {
@@ -344,7 +347,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 					(LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 20);
 		}
 
-		// Texto no centro inferio quando o jogador errar
+		// Texto no centro inferior, quando o jogador erra
 		if (jogoTerminado || jogadorErrou) {
 			grafico.setFont(new Font("Comic", Font.BOLD, 20));
 			grafico.setColor(Color.RED);
@@ -399,7 +402,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/*
-	 * Inicia o campeonato, definindo a velocidade e dificuldade do campeonato
+	 * Inicia o campeonato, definindo a velocidade e dificuldade do campeonato,
 	 * além de inicializar a jogada do primeiro jogador
 	 */
 	private void iniciarCampeonato() {
@@ -425,7 +428,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Inicia define a fase do jogador baseado na dificuldade e inicia uma sequência de cores
+	 * Inicia a fase do jogador baseado na dificuldade e a sequência de cores para a jogada
 	 */
 	private void iniciarJogada() {
 		campeonatoAtual.getJogador(indexJogadorAtual).setFaseAtual(offsetFase);
@@ -434,7 +437,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Inicializa uma sequência com o numero de piscadas equivalente ao contador de fases do jogador
+	 * Inicializa uma sequência com o número de piscadas equivalente a fase atual do jogador
 	 */
 	private void iniciarUmaSequencia() {
 		sequenciaAtual = new SequenciaDeCores(campeonatoAtual.getJogador(indexJogadorAtual).getFaseAtual());
@@ -481,8 +484,8 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Alerta que todos os quadrados acerca de uma mudanca no estado do jogo
-	 * @param bool true se o jogo tiver terminado ou false, caso contrario
+	 * Alerta todos os quadrados acerca da mudança de estado do jogo
+	 * @param bool    true se o jogo estiver terminado, false caso contrário
 	 */
 	private void alertaJogoTerminado(boolean bool) {
 		jogoTerminado = bool;
@@ -492,8 +495,8 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Muda o piscar dos botoes de cores
-	 * @param bool  true se os quadrados devem estar piscando, do contrario, false
+	 * Muda o piscar dos botões de cores
+	 * @param bool  true se os quadrados devem estar piscando, false caso contrário
 	 */
 	private void triggerTodasPiscando(boolean bool) {
 		for (int i = 0; i< NUM_QUADRADOS; i++) {
@@ -541,8 +544,6 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 		public void actionPerformed(ActionEvent e) {
 			if (!jogoRodando) {
 				String nomeCampeonatoStr = nomeCampeonato.getText();
-				System.out.println("nome campeonato: " + nomeCampeonatoStr);
-
 				if (nomeCampeonatoStr != null && !nomeCampeonatoStr.isEmpty()) {
 					campeonatoAtual.setNome(nomeCampeonatoStr);		
 				} else {
@@ -551,13 +552,11 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 
 				for (int i = 0; i < campeonatoAtual.getQuantidadeJogadores(); i++) {
 					String nomeJogador = nomesJogadores.get(i).getText();
-					System.out.println("nome jogador " + nomeJogador);
 					if (nomeJogador != null && !nomeJogador.isEmpty()) {
 						campeonatoAtual.getJogador(i).setNome(nomeJogador);
 					}
 
 					String apelidoJogador = apelidosJogadores.get(i).getText();
-					System.out.println("apelido jogador " + apelidoJogador);
 					if (apelidoJogador != null && !apelidoJogador.isEmpty()) {
 						campeonatoAtual.getJogador(i).setApelido(apelidoJogador);
 					}
@@ -572,7 +571,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 	}
 	
 	/**
-	 * Listener do botao de salvar/carregar dados de um campeonato
+	 * Listener do botão de salvar/carregar dados de um campeonato
 	 */
 	private class botaoSalvarCarregarListener implements ActionListener {
 		private botaoSalvarCarregarListener() {}
@@ -595,7 +594,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 					File arquivoSelecionado = seletorArquivo.getSelectedFile();
 					FileInputStream arquivoEntrada = new FileInputStream(arquivoSelecionado.getAbsoluteFile());
 
-					// le primeira linha (ou seja, até que cheguemos no \n)
+					// le primeira linha (ou seja, até que chegue no \n)
 					for (int byteChar = arquivoEntrada.read(); byteChar != '\n'; byteChar = arquivoEntrada.read()) {
 						primeiraLinha += (char) byteChar; // convertendo para tipo caracter
 					}
@@ -692,7 +691,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 					+ "uma sequência diferente cada vez maior que deve ser repetida pelo jogador.\n\n"
 					+ "Se você errar a sequência, a sua rodada termina e vai para o próximo jogador,\n"
 					+ "se não houver mais jogadores o jogo termina.\n\n"
-					+ "O jogo pode ser pausado e retomado do mesmo ponto e também é possível salvar\n"
+					+ "O jogo pode ser pausado e retomado do mesmo ponto, também é possível salvar\n"
 					+ "o estado atual do campeonato em um arquivo e carregá-lo posteriormente.\n\n"
 					+ "Trabalho Avaliativo da disciplina Programação Orientada a Objetos.\n\n"
 					+ "Discentes: George Neres, Jean Andrade, Lucas Fonsêca e Vitor Emanuel", "Ajuda", JOptionPane.DEFAULT_OPTION);
@@ -721,7 +720,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 				jogadorErrou = true;
 				indexJogadorAtual++;
 				toques = 0;
-				// Se o jogador Atual ja tiver passado uma ou mais fases, iniciamos somente uma sequencia
+				// Se o jogador Atual ja tiver passado uma ou mais fases, iniciamos somente uma sequência
 				// com a quantidade equivalente a fase, caso for a primeira vez que o jogador estiver jogando
 				// iniciamos a jogada dele
 				if ((campeonatoAtual.getJogador(indexJogadorAtual).getFaseAtual() - offsetFase) > 0) {
@@ -735,7 +734,7 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 					indexJogadorAtual = 0;
 					JOptionPane.showConfirmDialog(null, 
 							"Continuar jogo em fase extra.", "Ocorreu um empate!!!", JOptionPane.DEFAULT_OPTION);
-					// recomeçando as sequencias
+					// recomeçando as sequências
 					campeonatoAtual.getJogador(indexJogadorAtual).retomaJogada();
 					iniciarUmaSequencia();
 				} else {
