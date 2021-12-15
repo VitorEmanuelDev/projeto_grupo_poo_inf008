@@ -663,6 +663,10 @@ public class Genius extends JPanel implements ActionListener, MouseListener {
 					excecao.printStackTrace();
 					JOptionPane.showMessageDialog(null,
 						"Falha! " + excecao.getMessage(), "Erro ao Salvar Campeonato", JOptionPane.ERROR_MESSAGE);
+
+					// retornando ao estado anterior do jogo e jogador
+					campeonatoAtual.getJogador(indexJogadorAtual).retomaJogada();
+					jogoRodando = jogoRodandoEstado;
 					return;
 				}
 
