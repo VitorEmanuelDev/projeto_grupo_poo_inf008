@@ -309,7 +309,8 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	}
 
 	public void atualizaPlacar(Jogador jogador) {
-		Graphics2D grafico = (Graphics2D) this.getGraphics();
+		repaint();
+		Graphics2D grafico = (Graphics2D) getGraphics();
 		grafico.setColor(Color.WHITE);
 		grafico.setFont(new Font("Comic", Font.BOLD, 14));
 		//grafico.clearRect(); TODO

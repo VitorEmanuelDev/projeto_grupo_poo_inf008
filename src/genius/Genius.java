@@ -10,7 +10,6 @@ public class Genius implements ActionListener {
 	// ter classe gui aqui?
 	private GeniusGUI gui;
 	private int toques;
-	private int indicePadraoJogada;
 	private int indicePadraoSequenciaAtual;
 	private int indiceJogadorAtual;
 	private Integer moduloVelocidade;
@@ -30,7 +29,6 @@ public class Genius implements ActionListener {
 	 */
 	public Genius() {
 		toques = 0;
-		indicePadraoJogada = 0;
 		indicePadraoSequenciaAtual = 0;
 		indiceJogadorAtual = 0;
 		sequenciaAtual = new SequenciaCores(0);
@@ -57,6 +55,7 @@ public class Genius implements ActionListener {
 	 */
 	private void finalizaCampeonato() {
 		gui.alertaJogoTerminado(true);
+		gui.repaint();
 		jogoRodando = false;
 		indiceJogadorAtual = 0;
 		indiceJogadorErrou = -1;
@@ -88,16 +87,16 @@ public class Genius implements ActionListener {
 
 	public void checaJogada(int indiceCorClicada) {
 		toques = 0;
-		if (indiceCorClicada == sequenciaAtual.getElemento(indicePadraoJogada)) {
+		if (indiceCorClicada == sequenciaAtual.getElemento(indicePadraoSequenciaAtual)) {
 			campeonatoAtual.getJogador(indiceJogadorAtual).incrementaPontuacao();
 			gui.atualizaPlacar(campeonatoAtual.getJogador(indiceJogadorAtual));
-			indicePadraoJogada += 1;
+			indicePadraoSequenciaAtual += 1;
 			indiceJogadorErrou = -1;
-			avancarFase = indicePadraoJogada >= sequenciaAtual.getQuantidade();
+			avancarFase = indicePadraoSequenciaAtual >= sequenciaAtual.getQuantidade();
 		} else if (indiceJogadorAtual + 1 < campeonatoAtual.getQuantidadeJogadores()) {
 			indiceJogadorErrou = indiceJogadorAtual;
 			indiceJogadorAtual += 1;
-			indicePadraoJogada = 0;
+			indicePadraoSequenciaAtual = 0;
 			if (campeonatoAtual.getJogador(indiceJogadorAtual).getFaseAtual() != 0) {
 				campeonatoAtual.getJogador(indiceJogadorAtual).retomaJogada();
 				reiniciaFase();
@@ -128,7 +127,7 @@ public class Genius implements ActionListener {
 
 		if (indicePadraoSequenciaAtual < sequenciaAtual.getQuantidade()) {
 			if (toques % moduloVelocidade == 0) {
-				gui.ativaBotaoCor(indicePadraoSequenciaAtual);
+				gui.ativaBotaoCor(indicePadraoSequenciaAtual); // TODO bug
 				indicePadraoSequenciaAtual += 1;
 				toques = 0;
 			}
@@ -136,21 +135,22 @@ public class Genius implements ActionListener {
 				gui.triggerTodasPiscando(false);
 			}
 		} else if (avancarFase) { // caso true, significa que devemos ir para a proxima fase
-			indicePadraoJogada = 0;
-			avancarFase = false;
 			gui.triggerTodasPiscando(true);
 			//gui.repaint();
 			if (toques % 60 == 0) { // consider do not have it here
 				gui.triggerTodasPiscando(false);
-				iniciaProximaFase();
 				//gui.repaint();
 				toques = 0;
+				indicePadraoSequenciaAtual = 0;
+				avancarFase = false;
+				iniciaProximaFase();
 			}
 		} else if (toques % 20 == 0) {
 			gui.triggerTodasPiscando(false);
 			//gui.repaint();
 			toques = 0;
 		}
+		gui.repaint();
 		// TODO colocar condicional, nao pode sempre atualizar a tela
 		// caso o indiceJogadorErrou diferente de -1, significa que devemos alertar que um jogador errou
 		if (indiceJogadorErrou != -1) {
@@ -161,7 +161,7 @@ public class Genius implements ActionListener {
 
 	public void run() {
 		gui = new GeniusGUI(this);
-		temporizador = new Timer(/*TEMPORIZADOR_DELAY */ 20, this);
+		temporizador = new Timer(TEMPORIZADOR_DELAY, this);
 	}
 
 	// Roda jogo
