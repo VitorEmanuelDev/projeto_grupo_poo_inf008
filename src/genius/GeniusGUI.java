@@ -331,7 +331,6 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	 */
 	public void ativaBotaoCor(int indicePadraoSequencia) {
 		botoesCores[indicePadraoSequencia].setPiscada(true);
-		botoesCores[indicePadraoSequencia].desenharColorirQuadrado((Graphics2D) this.getGraphics());
 		arraySonoro[indicePadraoSequencia].play();
 	}
 
@@ -362,8 +361,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	 */
 	public void triggerTodasPiscando(boolean bool) {
 		for (int i = 0; i < NUM_QUADRADOS; i++) {
-			botoesCores[i].setPiscada(bool); // TODO see what do here
-			botoesCores[i].desenharColorirQuadrado((Graphics2D) this.getGraphics());
+			botoesCores[i].setPiscada(bool);
 		}
 	}
 
@@ -557,13 +555,13 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	// Listeners do mouse:
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO see way to verify it  ver melhor nome
 		if (parent.jogadorPodeClicar()) {
 			int indiceCorClicada = coordenadasQuadrado(e.getX(), e.getY());
 			if (indiceCorClicada == -1) {
 				return;
 			}
-			botoesCores[indiceCorClicada].setPiscada(true);
+			botoesCores[indiceCorClicada].setPiscada(true); // TODO talvez ativaBotaoCor
+			repaint();
 			parent.checaJogada(indiceCorClicada);
 		}
 	}

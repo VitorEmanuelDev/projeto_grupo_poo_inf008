@@ -58,7 +58,6 @@ public class Genius implements ActionListener {
 	 */
 	private void finalizaCampeonato() {
 		gui.alertaJogoTerminado(true);
-		gui.repaint();
 		jogoRodando = false;
 		indiceJogadorAtual = -1;
 		indiceJogadorErrou = -1;
@@ -113,7 +112,6 @@ public class Genius implements ActionListener {
 			reiniciaFase();
 		} else {
 			finalizaCampeonato();
-			// TODO ver com a gui fica com o final do jogo
 			gui.criaRelatorioFinal(campeonatoAtual);
 		}
 	}
@@ -125,33 +123,34 @@ public class Genius implements ActionListener {
 		}
 
 		toques += 1;
+		boolean deveRedesenharTela = false;
 
 		if (indicePadraoSequenciaCor < sequenciaAtual.getQuantidade()) {
 			if (toques % moduloVelocidade == 0) {
-				gui.ativaBotaoCor(indicePadraoSequenciaCor); // TODO bug
+				gui.ativaBotaoCor(sequenciaAtual.getElemento(indicePadraoSequenciaCor));
 				indicePadraoSequenciaCor += 1;
 				toques = 0;
-			}
-			else if (toques % 20 == 0) {
+			} else if (toques % 20 == 0) {
 				gui.triggerTodasPiscando(false);
 			}
 		} else if (avancarFase) { // caso true, significa que devemos ir para a proxima fase
 			gui.triggerTodasPiscando(true);
-			//gui.repaint();
-			if (toques % 60 == 0) { // consider do not have it here
+			if (toques % 60 == 0) {
 				gui.triggerTodasPiscando(false);
-				//gui.repaint();
-				toques = 0;
 				indicePadraoSequenciaJogador = 0;
 				avancarFase = false;
+				toques = 0;
 				iniciaProximaFase();
 			}
 		} else if (toques % 20 == 0) {
 			gui.triggerTodasPiscando(false);
-			//gui.repaint();
 			toques = 0;
 		}
-		gui.repaint();
+
+		// otimização, somente redenha a tela atual caso toques seja 0 ou foi definido que devemos redesenhar a tela
+		if (toques == 0 || deveRedesenharTela) {
+			gui.repaint();
+		}
 	}
 
 	public void run() {
@@ -170,6 +169,7 @@ public class Genius implements ActionListener {
 	 * @return   true caso o jogo espere clique do jogador, false caso contrário
 	 */
 	public boolean jogadorPodeClicar() {
+		// TODO ainda permite cliques quando estiver piscando o ultimo quadrado
 		boolean estaMostrandoSequencia = indicePadraoSequenciaCor < sequenciaAtual.getQuantidade();
 		return jogoRodando && !estaMostrandoSequencia && !avancarFase;
 	}
