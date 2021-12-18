@@ -14,8 +14,8 @@ public class QuadradosCores {
     private int posicaoX;
     private int posicaoY;
     private boolean devePiscar;
-    private static boolean jogoTerminado;
-    private static Color corJogoTerminado = new Color(30, 30, 30);
+    private static boolean estaDesabilitado;
+    private static Color corDesabilitada = new Color(30, 30, 30);
 
     /**
      * Cria um quadrado com uma determinada cor principal, posição e dimensão
@@ -32,7 +32,7 @@ public class QuadradosCores {
         this.posicaoX = posicaoX;
         this.posicaoY = posicaoY;
         this.devePiscar = false;
-        jogoTerminado = false;
+        estaDesabilitado = false;
     }
 
     /**
@@ -40,8 +40,8 @@ public class QuadradosCores {
      * @param grafico     contexto no qual será desenhado
      */
     public void desenharColorirQuadrado(Graphics2D grafico) {
-        if (jogoTerminado) {
-            grafico.setColor(corJogoTerminado);
+        if (estaDesabilitado) {
+            grafico.setColor(corDesabilitada);
         } else if (devePiscar) {
             grafico.setColor(corPrincipal);
         } else {
@@ -75,7 +75,7 @@ public class QuadradosCores {
     /**
      * @param bool      mostra se o quadrado deve estar em modo de jogo terminado
      */
-    public void setJogoTerminado(boolean bool) {
-        jogoTerminado = bool;
+    public void setDesabilitado(boolean bool) {
+        estaDesabilitado = bool;
     }
 }
