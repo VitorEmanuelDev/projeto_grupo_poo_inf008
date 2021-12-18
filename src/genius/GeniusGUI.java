@@ -306,26 +306,24 @@ public class GeniusGUI extends JPanel implements MouseListener {
 		for (int i = 0; i < NUM_QUADRADOS; i++) {
 			botoesCores[i].desenharColorirQuadrado(grafico);
 		}
-	}
 
-	public void atualizaPlacar(Jogador jogador) {
-		repaint();
-		// TODO considerar ter string para o placar
-		Graphics2D grafico = (Graphics2D) getGraphics();
-		grafico.setColor(Color.WHITE);
-		grafico.setFont(new Font("Comic", Font.BOLD, 14));
-		//grafico.clearRect(); TODO
-		grafico.drawString("Jogador: " + jogador.getApelido(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET - 20);
-		grafico.drawString("Fase:  " + (jogador.getFaseAtual() - parent.getOffsetFase()), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
-		grafico.drawString("Pontos totais: " + jogador.getPontuacao() + " (+" + jogador.ultimaPontuacaoAcrescentada() + ")",
-				(LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 20);
-	}
+		Jogador jogadorAtual = parent.getJogadorAtual();
+		if (jogadorAtual != null) {
+			grafico.setColor(Color.WHITE);
+			grafico.setFont(new Font("Comic", Font.BOLD, 14));
+			//grafico.clearRect(); TODO
+			grafico.drawString("Jogador: " + jogadorAtual.getApelido(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET - 20);
+			grafico.drawString("Fase:  " + (jogadorAtual.getFaseAtual() - parent.getOffsetFase()), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
+			grafico.drawString("Pontos totais: " + jogadorAtual.getPontuacao() + " (+" + jogadorAtual.ultimaPontuacaoAcrescentada() + ")",
+					(LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 20);
+		}
 
-	public void alertaJogadorErrou(Jogador jogador) {
-		Graphics2D grafico = (Graphics2D) this.getGraphics();
-		grafico.setFont(new Font("Comic", Font.BOLD, 20));
-		grafico.setColor(Color.RED);
-		grafico.drawString(jogador.getApelido() + " errou!!!", (LARGURA/2) - 80,  550);
+		Jogador jogadorErrou = parent.getJogadorErrou();
+		if (jogadorErrou != null) {
+			grafico.setFont(new Font("Comic", Font.BOLD, 20));
+			grafico.setColor(Color.RED);
+			grafico.drawString(jogadorErrou.getApelido() + " errou!!!", (LARGURA/2) - 80,  550);
+		}
 	}
 
 	/**

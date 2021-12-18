@@ -32,11 +32,11 @@ public class Genius implements ActionListener {
 		toques = 0;
 		indicePadraoSequenciaCor = 0;
 		indicePadraoSequenciaJogador = 0;
-		indiceJogadorAtual = 0;
-		sequenciaAtual = new SequenciaCores(0);
+		indiceJogadorErrou = -1;
+		indiceJogadorAtual = -1;
 		jogoRodando = false;
 		avancarFase = false;
-		indiceJogadorErrou = -1;
+		sequenciaAtual = new SequenciaCores(0);
 	}
 
 	/*
@@ -48,6 +48,7 @@ public class Genius implements ActionListener {
 		offsetFase = quantidadeSequencia;
 		temporizador.start();
 		jogoRodando = true;
+		indiceJogadorAtual = 0;
 		gui.triggerTodasPiscando(false);
 		iniciaProximaFase();
 	}
@@ -59,7 +60,7 @@ public class Genius implements ActionListener {
 		gui.alertaJogoTerminado(true);
 		gui.repaint();
 		jogoRodando = false;
-		indiceJogadorAtual = 0;
+		indiceJogadorAtual = -1;
 		indiceJogadorErrou = -1;
 		temporizador.stop();
 	}
@@ -74,7 +75,6 @@ public class Genius implements ActionListener {
 			campeonatoAtual.getJogador(indiceJogadorAtual).setFaseAtual(offsetFase);
 		}
 		campeonatoAtual.getJogador(indiceJogadorAtual).avancaFase();
-		gui.atualizaPlacar(campeonatoAtual.getJogador(indiceJogadorAtual));
 		// gera nova sequência de cores
 		sequenciaAtual = new SequenciaCores(campeonatoAtual.getJogador(indiceJogadorAtual).getFaseAtual());
 		indicePadraoSequenciaCor = 0;
@@ -83,7 +83,6 @@ public class Genius implements ActionListener {
 	}
 
 	public void reiniciaFase() {
-		gui.atualizaPlacar(campeonatoAtual.getJogador(indiceJogadorAtual));
 		sequenciaAtual = new SequenciaCores(campeonatoAtual.getJogador(indiceJogadorAtual).getFaseAtual());
 		indicePadraoSequenciaCor = 0;
 		indicePadraoSequenciaJogador = 0;
@@ -94,7 +93,6 @@ public class Genius implements ActionListener {
 		toques = 0;
 		if (indiceCorClicada == sequenciaAtual.getElemento(indicePadraoSequenciaJogador)) {
 			campeonatoAtual.getJogador(indiceJogadorAtual).incrementaPontuacao();
-			gui.atualizaPlacar(campeonatoAtual.getJogador(indiceJogadorAtual));
 			indicePadraoSequenciaJogador += 1;
 			indiceJogadorErrou = -1;
 			avancarFase = indicePadraoSequenciaJogador >= sequenciaAtual.getQuantidade();
@@ -154,12 +152,6 @@ public class Genius implements ActionListener {
 			toques = 0;
 		}
 		gui.repaint();
-		// TODO colocar condicional, nao pode sempre atualizar a tela
-		// caso o indiceJogadorErrou diferente de -1, significa que devemos alertar que um jogador errou
-		if (indiceJogadorErrou != -1) {
-			gui.alertaJogadorErrou(campeonatoAtual.getJogador(indiceJogadorErrou));
-		}
-
 	}
 
 	public void run() {
@@ -228,5 +220,19 @@ public class Genius implements ActionListener {
 
 	public void setModuloVelocidade(Integer novaVelocidade) {
 		moduloVelocidade = novaVelocidade;
+	}
+
+	public Jogador getJogadorErrou() {
+		if (indiceJogadorErrou != -1) {
+			return campeonatoAtual.getJogador(indiceJogadorErrou);
+		}
+		return null;
+	}
+
+	public Jogador getJogadorAtual() {
+		if (indiceJogadorAtual != -1) {
+			return campeonatoAtual.getJogador(indiceJogadorAtual);
+		}
+		return null;
 	}
 }
