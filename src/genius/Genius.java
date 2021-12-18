@@ -10,7 +10,7 @@ public class Genius implements ActionListener {
 	// ter classe gui aqui?
 	private GeniusGUI gui;
 	private int toques;
-	private int indicePadraoSequenciaAtual;
+	private int indicePadraoSequenciaCor;
 	private int indiceJogadorAtual;
 	private Integer moduloVelocidade;
 	private int offsetFase;
@@ -23,13 +23,15 @@ public class Genius implements ActionListener {
 	private boolean jogoRodando;
 	private boolean avancarFase;
 	private int indiceJogadorErrou;
+	private int indicePadraoSequenciaJogador;
 	
 	/**
 	 * Construtor, cria o frame principal, inicializa o temporizador
 	 */
 	public Genius() {
 		toques = 0;
-		indicePadraoSequenciaAtual = 0;
+		indicePadraoSequenciaCor = 0;
+		indicePadraoSequenciaJogador = 0;
 		indiceJogadorAtual = 0;
 		sequenciaAtual = new SequenciaCores(0);
 		jogoRodando = false;
@@ -75,33 +77,34 @@ public class Genius implements ActionListener {
 		gui.atualizaPlacar(campeonatoAtual.getJogador(indiceJogadorAtual));
 		// gera nova sequência de cores
 		sequenciaAtual = new SequenciaCores(campeonatoAtual.getJogador(indiceJogadorAtual).getFaseAtual());
-		indicePadraoSequenciaAtual = 0;
+		indicePadraoSequenciaCor = 0;
+		indicePadraoSequenciaJogador = 0;
+		toques = 0;
 	}
 
 	public void reiniciaFase() {
 		gui.atualizaPlacar(campeonatoAtual.getJogador(indiceJogadorAtual));
 		sequenciaAtual = new SequenciaCores(campeonatoAtual.getJogador(indiceJogadorAtual).getFaseAtual());
-		indicePadraoSequenciaAtual = 0;
+		indicePadraoSequenciaCor = 0;
+		indicePadraoSequenciaJogador = 0;
 		toques = 0;
 	}
 
 	public void checaJogada(int indiceCorClicada) {
 		toques = 0;
-		if (indiceCorClicada == sequenciaAtual.getElemento(indicePadraoSequenciaAtual)) {
+		if (indiceCorClicada == sequenciaAtual.getElemento(indicePadraoSequenciaJogador)) {
 			campeonatoAtual.getJogador(indiceJogadorAtual).incrementaPontuacao();
 			gui.atualizaPlacar(campeonatoAtual.getJogador(indiceJogadorAtual));
-			indicePadraoSequenciaAtual += 1;
+			indicePadraoSequenciaJogador += 1;
 			indiceJogadorErrou = -1;
-			avancarFase = indicePadraoSequenciaAtual >= sequenciaAtual.getQuantidade();
+			avancarFase = indicePadraoSequenciaJogador >= sequenciaAtual.getQuantidade();
 		} else if (indiceJogadorAtual + 1 < campeonatoAtual.getQuantidadeJogadores()) {
 			indiceJogadorErrou = indiceJogadorAtual;
 			indiceJogadorAtual += 1;
-			indicePadraoSequenciaAtual = 0;
 			if (campeonatoAtual.getJogador(indiceJogadorAtual).getFaseAtual() != 0) {
 				campeonatoAtual.getJogador(indiceJogadorAtual).retomaJogada();
 				reiniciaFase();
 			} else {
-				toques = 0;
 				iniciaProximaFase();
 			}
 		} else if (campeonatoAtual.checaEmpate()) {
@@ -125,10 +128,10 @@ public class Genius implements ActionListener {
 
 		toques += 1;
 
-		if (indicePadraoSequenciaAtual < sequenciaAtual.getQuantidade()) {
+		if (indicePadraoSequenciaCor < sequenciaAtual.getQuantidade()) {
 			if (toques % moduloVelocidade == 0) {
-				gui.ativaBotaoCor(indicePadraoSequenciaAtual); // TODO bug
-				indicePadraoSequenciaAtual += 1;
+				gui.ativaBotaoCor(indicePadraoSequenciaCor); // TODO bug
+				indicePadraoSequenciaCor += 1;
 				toques = 0;
 			}
 			else if (toques % 20 == 0) {
@@ -141,7 +144,7 @@ public class Genius implements ActionListener {
 				gui.triggerTodasPiscando(false);
 				//gui.repaint();
 				toques = 0;
-				indicePadraoSequenciaAtual = 0;
+				indicePadraoSequenciaJogador = 0;
 				avancarFase = false;
 				iniciaProximaFase();
 			}
@@ -171,11 +174,11 @@ public class Genius implements ActionListener {
 	}
 
 	/**
-	 * Retorna booleano que representa que o jogo esta rodando ou não TODO corrigir doc
-	 * @return   true caso o jogo esteja em progresso, false caso contrário
+	 * Retorna booleano que representa se o jogo esta esperando entrada do jogador ou não
+	 * @return   true caso o jogo espere clique do jogador, false caso contrário
 	 */
-	public boolean getJogoRodando() {
-		boolean estaMostrandoSequencia = indicePadraoSequenciaAtual < sequenciaAtual.getQuantidade();
+	public boolean jogadorPodeClicar() {
+		boolean estaMostrandoSequencia = indicePadraoSequenciaCor < sequenciaAtual.getQuantidade();
 		return jogoRodando && !estaMostrandoSequencia && !avancarFase;
 	}
 

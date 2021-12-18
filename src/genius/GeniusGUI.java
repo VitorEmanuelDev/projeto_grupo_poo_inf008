@@ -310,6 +310,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 
 	public void atualizaPlacar(Jogador jogador) {
 		repaint();
+		// TODO considerar ter string para o placar
 		Graphics2D grafico = (Graphics2D) getGraphics();
 		grafico.setColor(Color.WHITE);
 		grafico.setFont(new Font("Comic", Font.BOLD, 14));
@@ -559,7 +560,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO see way to verify it  ver melhor nome
-		if (parent.getJogoRodando()) {
+		if (parent.jogadorPodeClicar()) {
 			int indiceCorClicada = coordenadasQuadrado(e.getX(), e.getY());
 			if (indiceCorClicada == -1) {
 				return;
