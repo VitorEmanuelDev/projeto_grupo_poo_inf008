@@ -106,8 +106,8 @@ public class Jogador implements java.io.Serializable {
 	}
 
 	/**
-	 * Retorna pontuação obtida pelo jogador na ultima jogada
-	 * @return   ultima pontuação do jogador
+	 * Retorna pontuação obtida pelo jogador na última jogada
+	 * @return   última pontuação do jogador
 	 */
 	public int ultimaPontuacaoAcrescentada() {
 		return placar.ultimaPontuacaoAcrescentada();

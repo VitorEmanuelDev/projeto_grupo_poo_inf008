@@ -12,18 +12,18 @@ public class Sons {
 	private AudioClip audioVerde;
 
 	public Sons() { 
-		URL somVermelho = getClass().getResource("som1.wav");  
+		URL somVermelho = getClass().getResource("som1.wav");
 		audioVermelho = Applet.newAudioClip(somVermelho); 
 
 		URL somAzul = getClass().getResource("som2.wav");
-		audioAzul = Applet.newAudioClip(somAzul); 
+		audioAzul = Applet.newAudioClip(somAzul);
 
-		URL somAmarelo = getClass().getResource("som3.wav");  
+		URL somAmarelo = getClass().getResource("som3.wav");
 		audioAmarelo = Applet.newAudioClip(somAmarelo); 
 
-		URL somVerde = getClass().getResource("som4.wav");  
+		URL somVerde = getClass().getResource("som4.wav");
 		audioVerde = Applet.newAudioClip(somVerde);
-	}   
+	}
 
 	public AudioClip getAudioVermelho() {
 		return audioVermelho;
