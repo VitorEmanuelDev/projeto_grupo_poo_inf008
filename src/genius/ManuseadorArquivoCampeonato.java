@@ -47,7 +47,7 @@ public class ManuseadorArquivoCampeonato {
 
 		// conterá dados necessários para continuar o campeonato (indexJogadorAtual, moduloVelocidade, offsetFase)
 		String tempLinhaCabecalho = "";
-		// le primeira linha (ou seja, até que chegue no \n)
+		// lê primeira linha (ou seja, até que leia o \n)
 		for (int byteChar = arquivoEntrada.read(); byteChar != '\n'; byteChar = arquivoEntrada.read()) {
 			tempLinhaCabecalho += (char) byteChar; // convertendo para tipo caracter
 		}

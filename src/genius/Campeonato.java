@@ -87,7 +87,7 @@ public class Campeonato implements java.io.Serializable {
 
 	/**
 	 * Retorna a quantidade de jogadores
-	 * @return    caso houverem 2 ou mais jogadores empatadores,
+	 * @return    caso houverem 2 ou mais jogadores empatados,
 	 *            retorna a quantidade de jogadores empatados,
 	 *            caso contrário retorna o numero de jogadores totais
 	 */
