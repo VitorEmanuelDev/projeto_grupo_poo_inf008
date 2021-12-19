@@ -9,11 +9,7 @@ import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,9 +27,10 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	private JButton botaoAjuda;
 	private JComboBox<String> comboBoxDificuldade;
 	private JComboBox<String> comboBoxVelocidade;
+	private JFrame janelaPrincipal;
 	private QuadradosCores[] botoesCores;
 	private Sons som = new Sons();
-	private Genius parent;
+	private Genius controlador;
 
 	private AudioClip[] arraySonoro = { som.getAudioVerde(), som.getAudioVermelho(), som.getAudioAmarelo(), som.getAudioAzul() };
 
@@ -56,8 +53,8 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	/**
 	 * Construtor, cria o frame principal e botões do jogo
 	 */
-	public GeniusGUI(Genius parent) {
-		this.parent = parent;
+	public GeniusGUI(Genius controlador) {
+		this.controlador = controlador;
 		criaJanelaPrincipal();
 		inicializaQuadradosCores();
 		criaBotaoPrincipal();
@@ -75,7 +72,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 		Integer tamanhoLista = (Integer) JOptionPane.showInputDialog(null, "Escolha o número de jogadores:", 
 				"Jogadores", JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 		if (tamanhoLista == null) return;
-		
+
 		Campeonato campeonatoAtual = new Campeonato();
 		JFrame frame = new JFrame("Entrada inicial de dados");
 		frame.getContentPane().setBackground(COR_FUNDO);
@@ -89,7 +86,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 		labelCampeonato.setAlignmentX(Component.LEFT_ALIGNMENT);
 		labelCampeonato.setForeground(Color.WHITE);
 		painel.add(labelCampeonato);
-		
+
 		JTextField nomeCampeonato = new JTextField(15);
 		painel.add(nomeCampeonato);
 
@@ -117,16 +114,16 @@ public class GeniusGUI extends JPanel implements MouseListener {
 			JLabel labelNome = new JLabel("Nome do jogador " + i);
 			labelNome.setForeground(Color.WHITE);
 			painel.add(labelNome);
-			
+
 			JTextField fieldNome = new JTextField(15);
 			painel.add(fieldNome);
 			nomesJogadores.add(fieldNome);
-			
+
 			JLabel labelApelido = new JLabel("Apelido do jogador " + i);
 			labelApelido.setAlignmentX(Component.LEFT_ALIGNMENT);
 			labelApelido.setForeground(Color.WHITE);
 			painel.add(labelApelido);
-			
+
 			JTextField fieldApelido = new JTextField(15);
 			painel.add(fieldApelido);
 			apelidosJogadores.add(fieldApelido);
@@ -135,9 +132,9 @@ public class GeniusGUI extends JPanel implements MouseListener {
 		painel.add(Box.createVerticalGlue());
 		JScrollPane scrollPane = new JScrollPane(painel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		frame.getContentPane().add(scrollPane);
-        
-        criaBotaoInserirDados(frame, nomeCampeonato);
-        frame.pack();
+
+		criaBotaoInserirDados(frame, nomeCampeonato);
+		frame.pack();
 		frame.setVisible(true);
 	}
 
@@ -173,7 +170,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 		for (int i = 0; i < campeonato.getQuantidadeJogadores(); i++) {
 			dados[i][0] = campeonato.getJogador(i).getNome();
 			dados[i][1] = campeonato.getJogador(i).getApelido();
-			dados[i][2] = campeonato.getJogador(i).getFaseAtual() - parent.getOffsetFase(); // pegar o offset da classe pai
+			dados[i][2] = campeonato.getJogador(i).getFaseAtual() - controlador.getOffsetFase(); // pegar o offset da classe pai
 			dados[i][3] = campeonato.getJogador(i).getPontuacao();
 			dados[i][4] = listaJogadaMaisRapida[i];
 			dados[i][5] = somaTotalTempo[i];
@@ -207,15 +204,15 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	 * Cria frame principal
 	 */
 	private void criaJanelaPrincipal() { // TODO talvez errado e desnecessário
-		JFrame frame = new JFrame(NOME_JOGO);
-		frame.setSize(LARGURA, ALTURA);
-		frame.getContentPane().setBackground(COR_FUNDO);   
-		frame.setVisible(true);
-		frame.add(this);
-		frame.addMouseListener(this);
-		frame.setResizable(false);
+		janelaPrincipal = new JFrame(NOME_JOGO);
+		janelaPrincipal.setSize(LARGURA, ALTURA);
+		janelaPrincipal.getContentPane().setBackground(COR_FUNDO);   
+		janelaPrincipal.setVisible(true);
+		janelaPrincipal.add(this);
+		janelaPrincipal.addMouseListener(this);
+		janelaPrincipal.setResizable(false);
 		setLayout(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		janelaPrincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	/**
@@ -307,18 +304,18 @@ public class GeniusGUI extends JPanel implements MouseListener {
 			botoesCores[i].desenharColorirQuadrado(grafico);
 		}
 
-		Jogador jogadorAtual = parent.getJogadorAtual();
+		Jogador jogadorAtual = controlador.getJogadorAtual();
 		if (jogadorAtual != null) {
 			grafico.setColor(Color.WHITE);
 			grafico.setFont(new Font("Comic", Font.BOLD, 14));
 			//grafico.clearRect(); TODO
 			grafico.drawString("Jogador: " + jogadorAtual.getApelido(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET - 20);
-			grafico.drawString("Fase:  " + (jogadorAtual.getFaseAtual() - parent.getOffsetFase()), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
+			grafico.drawString("Fase:  " + (jogadorAtual.getFaseAtual() - controlador.getOffsetFase()), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
 			grafico.drawString("Pontos totais: " + jogadorAtual.getPontuacao() + " (+" + jogadorAtual.ultimaPontuacaoAcrescentada() + ")",
 					(LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 20);
 		}
 
-		Jogador jogadorErrou = parent.getJogadorErrou();
+		Jogador jogadorErrou = controlador.getJogadorErrou();
 		if (jogadorErrou != null) {
 			grafico.setFont(new Font("Comic", Font.BOLD, 20));
 			grafico.setColor(Color.RED);
@@ -332,13 +329,6 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	public void ativaBotaoCor(int indicePadraoSequencia) {
 		botoesCores[indicePadraoSequencia].setPiscada(true);
 		arraySonoro[indicePadraoSequencia].play();
-	}
-
-	public void repaintBotoesCores() {
-		// Desenha quadrados do botoesCores
-		for (int i = 0; i < NUM_QUADRADOS; i++) {
-			botoesCores[i].desenharColorirQuadrado((Graphics2D) this.getGraphics());
-		}
 	}
 
 	/**
@@ -363,6 +353,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 		for (int i = 0; i < NUM_QUADRADOS; i++) {
 			botoesCores[i].setPiscada(bool);
 		}
+		repaint();
 	}
 
 	/**
@@ -377,10 +368,10 @@ public class GeniusGUI extends JPanel implements MouseListener {
 				criarEntradaDeDadosInicial();
 			} else if (botaoPrincipal.getText() == "CONTINUAR") {
 				botaoPrincipal.setText("PAUSAR");
-				parent.retomaJogada();
+				controlador.retomaJogada();
 			} else {
 				botaoPrincipal.setText("CONTINUAR");
-				parent.pausaJogada();
+				controlador.pausaJogada();
 			}
 		}
 	}
@@ -408,12 +399,12 @@ public class GeniusGUI extends JPanel implements MouseListener {
 				if (nomeCampeonatoStr != null && !nomeCampeonatoStr.isEmpty()) {
 					campeonato.setNome(nomeCampeonatoStr);		
 				}
-				parent.setCampeonatoAtual(campeonato);
+				controlador.setCampeonatoAtual(campeonato);
 
 				for (int i = 1; i <= nomesJogadores.size(); i++) {
 					// inicializa novo jogador com nome e apelido padrão
 					Jogador jogador = new Jogador("Jogador " + i, "J" + i);
-					
+
 					String nomeJogador = nomesJogadores.get(i - 1).getText();
 					if (nomeJogador != null && !nomeJogador.isEmpty()) {
 						jogador.setNome(nomeJogador);
@@ -431,6 +422,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 				alertaJogoTerminado(false);
 				frameInserirDados.setVisible(false);
 				botaoPrincipal.setText("PAUSAR");
+				botaoSalvarCarregar.setText("SALVAR CAMPEONATO");
 				int velocidade = 50;
 				if (comboBoxVelocidade.getSelectedIndex() == 1) {
 					velocidade = 70;
@@ -443,7 +435,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 				} else if (comboBoxDificuldade.getSelectedIndex() == 2) {
 					quantidadeSequencia = 4;
 				}
-				parent.iniciaCampeonato(velocidade, quantidadeSequencia);
+				controlador.iniciaCampeonato(velocidade, quantidadeSequencia);
 			}
 		}
 	}
@@ -456,8 +448,6 @@ public class GeniusGUI extends JPanel implements MouseListener {
 		private botaoSalvarCarregarListener() {}
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JFrame frame = new JFrame(); // TODO analisar necessidade
-			frame.setSize(220, 50);
 			JFileChooser seletorArquivo = new JFileChooser();
 			seletorArquivo.setFileFilter(new FileNameExtensionFilter("GENIUS campeonato", "genius"));
 			ManuseadorArquivoCampeonato manuseadorArquivo = new ManuseadorArquivoCampeonato();
@@ -465,21 +455,21 @@ public class GeniusGUI extends JPanel implements MouseListener {
 			if (botaoSalvarCarregar.getText() == "CARREGAR CAMPEONATO") {
 				try {
 					seletorArquivo.setDialogTitle("Especifique o arquivo que deseja abrir");
-					int opcaoSelecionada = seletorArquivo.showOpenDialog(frame);
+					int opcaoSelecionada = seletorArquivo.showOpenDialog(janelaPrincipal);
 					// somente avançamos se foi selecionado um arquivo válido
 					if (opcaoSelecionada != JFileChooser.APPROVE_OPTION) {
 						return;
 					}
 
 					File arquivoSelecionado = seletorArquivo.getSelectedFile();
-					Campeonato campeonato = manuseadorArquivo.carregaCampeonato(arquivoSelecionado.getAbsolutePath()); // TODO botar 
-					parent.setCampeonatoAtual(campeonato);
+					Campeonato campeonato = manuseadorArquivo.carregaCampeonato(arquivoSelecionado.getAbsolutePath());
+					controlador.setCampeonatoAtual(campeonato);
 
 					// recupera dados do campeonato no cabeçalho
 					String[] valores = manuseadorArquivo.getLinhaCabecalho().split(" ");
-					parent.setIndexJogadorAtual(Integer.parseInt(valores[0]));
-					parent.setModuloVelocidade(Integer.parseInt(valores[1]));
-					parent.setOffsetFase(Integer.parseInt(valores[2]));
+					controlador.setIndexJogadorAtual(Integer.parseInt(valores[0]));
+					controlador.setModuloVelocidade(Integer.parseInt(valores[1]));
+					controlador.setOffsetFase(Integer.parseInt(valores[2]));
 
 					mostraDialogMensagem("Sucesso, campeonato carregado!", "Carregar Campeonato");
 					botaoPrincipal.setText("PAUSAR");
@@ -488,8 +478,8 @@ public class GeniusGUI extends JPanel implements MouseListener {
 					// quando salvo, o jogador atual teve seu tempo pausado, logo
 					// devemos retomar a jogada (sair do estado pausado)
 					alertaJogoTerminado(false);
-					parent.retomaJogada();
-					parent.reiniciaFase();
+					controlador.retomaJogada();
+					controlador.reiniciaFase();
 				} catch (IOException excecao) {
 					excecao.printStackTrace();
 					mostraDialogMensagem("Falha! Arquivo inválido.", "Carregar Campeonato", JOptionPane.ERROR_MESSAGE);
@@ -500,23 +490,21 @@ public class GeniusGUI extends JPanel implements MouseListener {
 			} else {
 				// pausando o jogo para evitar que o jogo continue
 				// enquanto estiver na tela de salvamento
-				parent.pausaJogada();
+				controlador.pausaJogada();
 
 				try {
-					// TODO mover seletorArquivo
 					seletorArquivo.setDialogTitle("Especifique o caminho do arquivo que deseja salvar");
-					
-					int opcaoSelecionada = seletorArquivo.showSaveDialog(frame);
+					int opcaoSelecionada = seletorArquivo.showSaveDialog(janelaPrincipal);
 					// somente avançamos se foi selecionado um arquivo válido
 					if (opcaoSelecionada != JFileChooser.APPROVE_OPTION) {
 						return;
 					}
 
 					// salvando dados importantes para a continuação posterior do campeonato
-					manuseadorArquivo.setLinhaCabecalho(parent.getIndexJogadorAtual() + " " + parent.getModuloVelocidade() + " " + parent.getOffsetFase());
+					manuseadorArquivo.setLinhaCabecalho(controlador.getIndexJogadorAtual() + " " + controlador.getModuloVelocidade() + " " + controlador.getOffsetFase());
 
 					File arquivoSelecionado = seletorArquivo.getSelectedFile();
-					manuseadorArquivo.salvaCampeonato(parent.getCampeonatoAtual(), arquivoSelecionado.getAbsolutePath());
+					manuseadorArquivo.salvaCampeonato(controlador.getCampeonatoAtual(), arquivoSelecionado.getAbsolutePath());
 
 					mostraDialogMensagem("Sucesso, arquivo salvo!", "Salvar Campeonato");
 				} catch (IOException excecao) {
@@ -524,8 +512,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 					mostraDialogMensagem("Falha! " + excecao.getMessage(), "Salvar Campeonato", JOptionPane.ERROR_MESSAGE);
 				}
 
-				// retoma jogada
-				parent.retomaJogada();
+				controlador.retomaJogada();
 			}
 		}
 	}
@@ -555,23 +542,26 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	// Listeners do mouse:
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (parent.jogadorPodeClicar()) {
+		if (controlador.jogadorPodeClicar()) {
 			int indiceCorClicada = coordenadasQuadrado(e.getX(), e.getY());
 			if (indiceCorClicada == -1) {
 				return;
 			}
 			botoesCores[indiceCorClicada].setPiscada(true); // TODO talvez ativaBotaoCor
 			repaint();
-			parent.checaJogada(indiceCorClicada);
+			controlador.checaJogada(indiceCorClicada);
 		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {}
+
 	@Override
 	public void mouseEntered(MouseEvent e) {}
+
 	@Override
 	public void mouseExited(MouseEvent e) {}
+
 	@Override
 	public void mouseClicked(MouseEvent e) {}
 

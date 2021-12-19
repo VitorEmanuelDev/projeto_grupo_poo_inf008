@@ -7,11 +7,11 @@ import javax.swing.Timer;
 
 public class Genius implements ActionListener {
 
-	// ter classe gui aqui?
 	private GeniusGUI gui;
 	private int toques;
 	private int indicePadraoSequenciaCor;
 	private int indiceJogadorAtual;
+	private int indiceJogadorErrou;
 	private Integer moduloVelocidade;
 	private int offsetFase;
 	private Campeonato campeonatoAtual;
@@ -22,7 +22,6 @@ public class Genius implements ActionListener {
 
 	private boolean jogoRodando;
 	private boolean avancarFase;
-	private int indiceJogadorErrou;
 	private int indicePadraoSequenciaJogador;
 	
 	/**
@@ -37,6 +36,17 @@ public class Genius implements ActionListener {
 		jogoRodando = false;
 		avancarFase = false;
 		sequenciaAtual = new SequenciaCores(0);
+	}
+
+	public void run() {
+		gui = new GeniusGUI(this);
+		temporizador = new Timer(TEMPORIZADOR_DELAY, this);
+	}
+
+	// Roda jogo
+	public static void main(String[] args) throws InterruptedException{
+		Genius genius = new Genius();
+		genius.run();
 	}
 
 	/*
@@ -123,10 +133,13 @@ public class Genius implements ActionListener {
 		}
 
 		toques += 1;
-		boolean deveRedesenharTela = false;
 
-		if (indicePadraoSequenciaCor < sequenciaAtual.getQuantidade()) {
-			if (toques % moduloVelocidade == 0) {
+		if (indicePadraoSequenciaCor <= sequenciaAtual.getQuantidade()) {
+			if (indicePadraoSequenciaCor == sequenciaAtual.getQuantidade() && toques % 20 == 0) {
+				indicePadraoSequenciaCor += 1;
+				gui.triggerTodasPiscando(false);
+				toques = 0;
+			} else if (toques % moduloVelocidade == 0) {
 				gui.ativaBotaoCor(sequenciaAtual.getElemento(indicePadraoSequenciaCor));
 				indicePadraoSequenciaCor += 1;
 				toques = 0;
@@ -142,26 +155,12 @@ public class Genius implements ActionListener {
 				toques = 0;
 				iniciaProximaFase();
 			}
-		} else if (toques % 20 == 0) {
-			gui.triggerTodasPiscando(false);
-			toques = 0;
 		}
 
-		// otimização, somente redenha a tela atual caso toques seja 0 ou foi definido que devemos redesenhar a tela
-		if (toques == 0 || deveRedesenharTela) {
+		// otimização, somente redenha a tela atual caso toques seja 0
+		if (toques == 0) {
 			gui.repaint();
 		}
-	}
-
-	public void run() {
-		gui = new GeniusGUI(this);
-		temporizador = new Timer(TEMPORIZADOR_DELAY, this);
-	}
-
-	// Roda jogo
-	public static void main(String[] args) throws InterruptedException{
-		Genius genius = new Genius();
-		genius.run();
 	}
 
 	/**
@@ -169,8 +168,7 @@ public class Genius implements ActionListener {
 	 * @return   true caso o jogo espere clique do jogador, false caso contrário
 	 */
 	public boolean jogadorPodeClicar() {
-		// TODO ainda permite cliques quando estiver piscando o ultimo quadrado
-		boolean estaMostrandoSequencia = indicePadraoSequenciaCor < sequenciaAtual.getQuantidade();
+		boolean estaMostrandoSequencia = indicePadraoSequenciaCor <= sequenciaAtual.getQuantidade();
 		return jogoRodando && !estaMostrandoSequencia && !avancarFase;
 	}
 
@@ -229,6 +227,9 @@ public class Genius implements ActionListener {
 		return null;
 	}
 
+	/**
+	 * @return Retorna jogador atual, caso o jogo não esteja em progresso, retorna nulo
+	 */
 	public Jogador getJogadorAtual() {
 		if (indiceJogadorAtual != -1) {
 			return campeonatoAtual.getJogador(indiceJogadorAtual);
