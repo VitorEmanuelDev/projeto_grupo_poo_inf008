@@ -153,14 +153,7 @@ public class Genius implements ActionListener {
 
 		toques += 1;
 
-		// somente entramos nesse if caso for ativado o ultimo botão da sequência
-		if (indicePadraoSequenciaCor == sequenciaAtual.getQuantidade()) {
-			if (toques % 20 == 0) {
-				indicePadraoSequenciaCor += 1;
-				gui.triggerTodasPiscando(false);
-				toques = 0;
-			}
-		} else if (indicePadraoSequenciaCor < sequenciaAtual.getQuantidade()) {
+		if (indicePadraoSequenciaCor < sequenciaAtual.getQuantidade()) {
 			if (toques % moduloVelocidade == 0) {
 				gui.ativaBotaoCor(sequenciaAtual.getElemento(indicePadraoSequenciaCor));
 				indicePadraoSequenciaCor += 1;
@@ -177,6 +170,13 @@ public class Genius implements ActionListener {
 				toques = 0;
 				iniciaProximaFase();
 			}
+		} else if (toques % 20 == 0) {
+			if (indicePadraoSequenciaCor == sequenciaAtual.getQuantidade()) {
+				// somente entramos nesse if caso for ativado o ultimo botão da sequência
+				indicePadraoSequenciaCor += 1;
+			}
+			gui.triggerTodasPiscando(false);
+			toques = 0;
 		}
 
 		// otimização, somente redenha a tela atual caso toques seja 0
