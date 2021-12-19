@@ -9,6 +9,7 @@ public class QuadradosCores {
 	 * Representa um quadrado com determinada cor na interface do jogo
 	 */
     private Color corPrincipal;
+    private final int ALTURA_OFFSET = 40;
     private int largura;
     private int altura;
     private int posicaoX;
@@ -56,10 +57,13 @@ public class QuadradosCores {
      * @return      true se o clique estiver dentro das coordenadas do quadrado, false caso contrário
      */
     public boolean estaDentroDasCoordenadas(int x, int y) {
-        if (x < posicaoX || y < posicaoY) {
+    	// altura offset é o valor que devemos adicionar para 
+    	// chegar à altura da área clicável que esteja em sincronia
+    	// com o quadrado colorido observável pelo usuário
+        if (x < posicaoX || y < (posicaoY + ALTURA_OFFSET)) {
             return false;
         }
-        if (x < (posicaoX + largura) && y < (posicaoY + altura)) {
+        if (x < (posicaoX + largura) && y < (posicaoY + altura + ALTURA_OFFSET)) {
             return true;
         }
         return false;
