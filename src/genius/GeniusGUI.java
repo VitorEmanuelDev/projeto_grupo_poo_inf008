@@ -34,7 +34,6 @@ public class GeniusGUI extends JPanel implements MouseListener {
 
 	private AudioClip[] arraySonoro = { som.getAudioVerde(), som.getAudioVermelho(), som.getAudioAmarelo(), som.getAudioAzul() };
 
-
 	// CONSTANTES:
 	private static final String NOME_JOGO = "Genius - Projeto POO!";
 	private static final int LARGURA = 600;
@@ -51,7 +50,8 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	private static final Color COR_FUNDO = new Color(0,0,0);
 
 	/**
-	 * Construtor, cria o frame principal e botões do jogo
+	 * Construtor, cria a janela principal, botões do jogo e o controlador
+	 * @param controlador    utilizado para pegar dados importantes e tratar ações dos jogadores
 	 */
 	public GeniusGUI(Genius controlador) {
 		this.controlador = controlador;
@@ -67,13 +67,12 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	 * Cria tela adicional de coleta de dados do campeonato, tanto seus participantes quanto a
 	 * dificuldade, velocidade e nome do campeonato
 	 */
-	public void criarEntradaDeDadosInicial() { // TODO pensar em forma de retornar os dados
+	public void criaEntradaDeDadosInicial() {
 		Integer[] options = {1, 2, 3, 4, 5, 6, 7, 8};
 		Integer tamanhoLista = (Integer) JOptionPane.showInputDialog(null, "Escolha o número de jogadores:", 
 				"Jogadores", JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 		if (tamanhoLista == null) return;
 
-		Campeonato campeonatoAtual = new Campeonato();
 		JFrame frame = new JFrame("Entrada inicial de dados");
 		frame.getContentPane().setBackground(COR_FUNDO);
 		frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -186,7 +185,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 		tabela.getTableHeader().setForeground(Color.WHITE);
 		tabela.getAutoResizeMode();
 
-		JFrame frame = new JFrame("Resultados do " + campeonato.getNome() + " - " + java.time.LocalDate.now()); // TODO talvez pegar dificuldade
+		JFrame frame = new JFrame("Resultados do " + campeonato.getNome() + " - " + java.time.LocalDate.now());
 		frame.setSize(220, 50);
 		frame.getContentPane().setBackground(COR_FUNDO);
 		frame.setResizable(true);
@@ -201,9 +200,9 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	}
 
 	/**
-	 * Cria frame principal
+	 * Cria janela principal do jogo
 	 */
-	private void criaJanelaPrincipal() { // TODO talvez errado e desnecessário
+	private void criaJanelaPrincipal() {
 		janelaPrincipal = new JFrame(NOME_JOGO);
 		janelaPrincipal.setSize(LARGURA, ALTURA);
 		janelaPrincipal.getContentPane().setBackground(COR_FUNDO);   
@@ -216,7 +215,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	}
 
 	/**
-	 * Cria o botão principal
+	 * Cria botão principal
 	 */
 	private void criaBotaoPrincipal() {
 		botaoPrincipal = new JButton("JOGAR");
@@ -230,7 +229,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	}
 
 	/**
-	 * Cria o botão de salvar/carregar campeonato
+	 * Cria botão de salvar/carregar campeonato
 	 */
 	private void criaBotaoSalvarCarregar() {
 		botaoSalvarCarregar = new JButton("CARREGAR CAMPEONATO");
@@ -244,7 +243,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	}
 
 	/**
-	 * Cria o botão ajuda
+	 * Cria botão ajuda
 	 */
 	private void criaBotaoAjuda() {
 		botaoAjuda = new JButton("AJUDA");
@@ -258,7 +257,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	}
 
 	/**
-	 * Cria o botão para popup de inserção de dados do campeonato
+	 * Cria botão do popup de inserção de dados do campeonato e inicio do jogo
 	 * @param frame   instância gráfica onde o botão será adicionado
 	 * @param nomeCampeonato    instância de campo de texto para leitura do nome do campeonato
 	 */
@@ -274,7 +273,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	}
 
 	/**
-	 * Inicializa os quadrados 
+	 * Inicializa botões cores
 	 */
 	private void inicializaQuadradosCores() {
 		botoesCores = new QuadradosCores[NUM_QUADRADOS];
@@ -291,7 +290,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	}
 
 	/**
-	 * Renderiza os itens gráficos do jogo
+	 * Renderiza itens gráficos do jogo
 	 * @param grafico     contexto de grafico 2D
 	 */
 	private void paint(Graphics2D grafico) {
@@ -308,7 +307,6 @@ public class GeniusGUI extends JPanel implements MouseListener {
 		if (jogadorAtual != null) {
 			grafico.setColor(Color.WHITE);
 			grafico.setFont(new Font("Comic", Font.BOLD, 14));
-			//grafico.clearRect(); TODO
 			grafico.drawString("Jogador: " + jogadorAtual.getApelido(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET - 20);
 			grafico.drawString("Fase:  " + (jogadorAtual.getFaseAtual() - controlador.getOffsetFase()), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
 			grafico.drawString("Pontos totais: " + jogadorAtual.getPontuacao() + " (+" + jogadorAtual.ultimaPontuacaoAcrescentada() + ")",
@@ -324,7 +322,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	}
 
 	/**
-	 * Pisca a cor atual da sequência e toca o som correspondente
+	 * Ativa a cor atual da sequência e toca o som correspondente
 	 */
 	public void ativaBotaoCor(int indicePadraoSequencia) {
 		botoesCores[indicePadraoSequencia].setPiscada(true);
@@ -346,7 +344,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	}
 
 	/**
-	 * Muda o piscar dos botões de cores
+	 * Muda a ativação dos botões de cores
 	 * @param bool  true se os quadrados devem estar piscando, false caso contrário
 	 */
 	public void triggerTodasPiscando(boolean bool) {
@@ -365,7 +363,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 		public void actionPerformed(ActionEvent e) {
 			if (botaoPrincipal.getText() == "JOGAR") {
 				alertaJogoTerminado(false);
-				criarEntradaDeDadosInicial();
+				criaEntradaDeDadosInicial();
 			} else if (botaoPrincipal.getText() == "CONTINUAR") {
 				botaoPrincipal.setText("PAUSAR");
 				controlador.retomaJogada();
@@ -419,10 +417,12 @@ public class GeniusGUI extends JPanel implements MouseListener {
 				}
 				nomesJogadores.clear();
 				apelidosJogadores.clear();
+
 				alertaJogoTerminado(false);
 				frameInserirDados.setVisible(false);
 				botaoPrincipal.setText("PAUSAR");
 				botaoSalvarCarregar.setText("SALVAR CAMPEONATO");
+
 				int velocidade = 50;
 				if (comboBoxVelocidade.getSelectedIndex() == 1) {
 					velocidade = 70;
@@ -440,7 +440,6 @@ public class GeniusGUI extends JPanel implements MouseListener {
 		}
 	}
 
-	// TODO move to Genius part of the logic
 	/**
 	 * Listener do botão de salvar/carregar dados de um campeonato
 	 */
@@ -467,7 +466,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 
 					// recupera dados do campeonato no cabeçalho
 					String[] valores = manuseadorArquivo.getLinhaCabecalho().split(" ");
-					controlador.setIndexJogadorAtual(Integer.parseInt(valores[0]));
+					controlador.setIndiceJogadorAtual(Integer.parseInt(valores[0]));
 					controlador.setModuloVelocidade(Integer.parseInt(valores[1]));
 					controlador.setOffsetFase(Integer.parseInt(valores[2]));
 
@@ -501,7 +500,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 					}
 
 					// salvando dados importantes para a continuação posterior do campeonato
-					manuseadorArquivo.setLinhaCabecalho(controlador.getIndexJogadorAtual() + " " + controlador.getModuloVelocidade() + " " + controlador.getOffsetFase());
+					manuseadorArquivo.setLinhaCabecalho(controlador.getIndiceJogadorAtual() + " " + controlador.getModuloVelocidade() + " " + controlador.getOffsetFase());
 
 					File arquivoSelecionado = seletorArquivo.getSelectedFile();
 					manuseadorArquivo.salvaCampeonato(controlador.getCampeonatoAtual(), arquivoSelecionado.getAbsolutePath());
@@ -547,7 +546,7 @@ public class GeniusGUI extends JPanel implements MouseListener {
 			if (indiceCorClicada == -1) {
 				return;
 			}
-			botoesCores[indiceCorClicada].setPiscada(true); // TODO talvez ativaBotaoCor
+			botoesCores[indiceCorClicada].setPiscada(true);
 			repaint();
 			controlador.checaJogada(indiceCorClicada);
 		}

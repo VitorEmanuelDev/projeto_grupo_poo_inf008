@@ -7,6 +7,9 @@ import javax.swing.Timer;
 
 public class Genius implements ActionListener {
 
+	/**
+	 * Classe que contém a lógica principal do jogo, sendo o controlador do funcionamento deste
+	 */
 	private GeniusGUI gui;
 	private int toques;
 	private int indicePadraoSequenciaCor;
@@ -38,20 +41,25 @@ public class Genius implements ActionListener {
 		sequenciaAtual = new SequenciaCores(0);
 	}
 
+	/**
+	 * Inicializa classe visual e temporizador de atualizações da tela do jogo
+	 */
 	public void run() {
 		gui = new GeniusGUI(this);
 		temporizador = new Timer(TEMPORIZADOR_DELAY, this);
 	}
 
-	// Roda jogo
+	// função main, inicializa a classe Genius e inicia o jogo
 	public static void main(String[] args) throws InterruptedException{
 		Genius genius = new Genius();
 		genius.run();
 	}
 
-	/*
-	 * Inicia o campeonato, definindo a velocidade e dificuldade do campeonato,
+	/**
+	 * Inicia campeonato, define a velocidade e dificuldade do campeonato,
 	 * além de inicializar a jogada do primeiro jogador
+	 * @param velocidade   velocidade a ser utilizada pelo jogo
+	 * @param quantidadeSequencia    número de sequências inicial a ser utilizada pelo jogo
 	 */
 	public void iniciaCampeonato(int velocidade, int quantidadeSequencia) {
 		moduloVelocidade = velocidade;
@@ -64,13 +72,15 @@ public class Genius implements ActionListener {
 	}
 
 	/**
-	 * Finaliza o campeonato, para temporizador e retorna estado para o inicial (antes do campeonato)
+	 * Finaliza campeonato, para o temporizador, retorna estado para o inicial (antes do campeonato)
+	 * e gera relatório final do campeonato
 	 */
 	private void finalizaCampeonato() {
 		gui.alertaJogoTerminado(true);
 		jogoRodando = false;
 		indiceJogadorAtual = -1;
 		indiceJogadorErrou = -1;
+		gui.criaRelatorioFinal(campeonatoAtual);
 		temporizador.stop();
 	}
 
@@ -91,6 +101,9 @@ public class Genius implements ActionListener {
 		toques = 0;
 	}
 
+	/**
+	 * Cria nova sequência baseado na fase atual e reinicializa fase
+	 */
 	public void reiniciaFase() {
 		sequenciaAtual = new SequenciaCores(campeonatoAtual.getJogador(indiceJogadorAtual).getFaseAtual());
 		indicePadraoSequenciaCor = 0;
@@ -98,6 +111,11 @@ public class Genius implements ActionListener {
 		toques = 0;
 	}
 
+	/**
+	 * Verifica se o jogador acertou a jogada, contabilizando o seu acerto ou erro, e também
+	 * verifica se ocorreu algum empate, iniciando rodada extras caso necessário
+	 * @param indiceCorClicada   indice da cor clicada pelo usuário
+	 */
 	public void checaJogada(int indiceCorClicada) {
 		toques = 0;
 		if (indiceCorClicada == sequenciaAtual.getElemento(indicePadraoSequenciaJogador)) {
@@ -122,10 +140,11 @@ public class Genius implements ActionListener {
 			reiniciaFase();
 		} else {
 			finalizaCampeonato();
-			gui.criaRelatorioFinal(campeonatoAtual);
 		}
 	}
 
+	// função chamada pelo temporizador, responsável por gerenciar comportamentos
+	// da interfase gráfica, quando o jogo deve avançar de fase e ativar os botões de cores
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (!jogoRodando) {
@@ -134,12 +153,15 @@ public class Genius implements ActionListener {
 
 		toques += 1;
 
-		if (indicePadraoSequenciaCor <= sequenciaAtual.getQuantidade()) {
-			if (indicePadraoSequenciaCor == sequenciaAtual.getQuantidade() && toques % 20 == 0) {
+		// somente entramos nesse if caso for ativado o ultimo botão da sequência
+		if (indicePadraoSequenciaCor == sequenciaAtual.getQuantidade()) {
+			if (toques % 20 == 0) {
 				indicePadraoSequenciaCor += 1;
 				gui.triggerTodasPiscando(false);
 				toques = 0;
-			} else if (toques % moduloVelocidade == 0) {
+			}
+		} else if (indicePadraoSequenciaCor < sequenciaAtual.getQuantidade()) {
+			if (toques % moduloVelocidade == 0) {
 				gui.ativaBotaoCor(sequenciaAtual.getElemento(indicePadraoSequenciaCor));
 				indicePadraoSequenciaCor += 1;
 				toques = 0;
@@ -172,14 +194,9 @@ public class Genius implements ActionListener {
 		return jogoRodando && !estaMostrandoSequencia && !avancarFase;
 	}
 
-	public Integer getOffsetFase() {
-		return offsetFase;
-	}
-
-	public void setOffsetFase(Integer novoOffset) {
-		offsetFase = novoOffset;
-	}
-
+	/**
+	 * Pausa jogada atual, parando o temporizador e pausando o jogador atual
+	 */
 	public void pausaJogada() {
 		if (jogoRodando) {
 			campeonatoAtual.getJogador(indiceJogadorAtual).pausaJogada();
@@ -188,6 +205,9 @@ public class Genius implements ActionListener {
 		}
 	}
 
+	/**
+	 * Retoma jogada atual, reiniciando o temporizador e continuando o tempo do jogador atual
+	 */
 	public void retomaJogada() {
 		if (!jogoRodando) {
 			campeonatoAtual.getJogador(indiceJogadorAtual).retomaJogada();
@@ -196,30 +216,70 @@ public class Genius implements ActionListener {
 		}
 	}
 
+	/**
+	 * @return tetorna o campeonato atual do jogo
+	 */
 	public Campeonato getCampeonatoAtual() {
 		return campeonatoAtual;
 	}
 
+	/**
+	 * Define o campeonato que será disputado
+	 * @param novoCampeonato    novo campeonato a ser disputado
+	 */
 	public void setCampeonatoAtual(Campeonato novoCampeonato) {
 		campeonatoAtual = novoCampeonato;
 	}
 
-	public Integer getIndexJogadorAtual() {
+	/**
+	 * @return retorna indice do jogador atual
+	 */
+	public Integer getIndiceJogadorAtual() {
 		return indiceJogadorAtual;
 	}
 
-	public void setIndexJogadorAtual(Integer novoIndex) {
-		indiceJogadorAtual = novoIndex;
+	/**
+	 * Define o jogador atual do jogo
+	 * @param novoIndice   novo indice a ser utilizado como jogador atual
+	 */
+	public void setIndiceJogadorAtual(Integer novoIndice) {
+		indiceJogadorAtual = novoIndice;
 	}
 
+	/**
+	 * @return retorna velocidade do jogo
+	 */
 	public Integer getModuloVelocidade() {
 		return moduloVelocidade;
 	}
 
+	/**
+	 * O offsetFase é utilizado como base das fases dos jogadores, definindo a dificuldade do jogo
+	 * @return   retorna a dificuldade atual do jogo
+	 */
+	public Integer getOffsetFase() {
+		return offsetFase;
+	}
+
+	/**
+	 * Define a dificuldade atual
+	 * @param novoOffset   nova dificuldade a ser utilizada como base
+	 */
+	public void setOffsetFase(Integer novoOffset) {
+		offsetFase = novoOffset;
+	}
+
+	/**
+	 * Define a velocidade que será usada no jogo
+	 * @param novaVelocidade    nova velocidade a ser utilizada
+	 */
 	public void setModuloVelocidade(Integer novaVelocidade) {
 		moduloVelocidade = novaVelocidade;
 	}
 
+	/**
+	 * @return Retorna jogador que errou, caso contrário retorna nulo
+	 */
 	public Jogador getJogadorErrou() {
 		if (indiceJogadorErrou != -1) {
 			return campeonatoAtual.getJogador(indiceJogadorErrou);
@@ -228,7 +288,7 @@ public class Genius implements ActionListener {
 	}
 
 	/**
-	 * @return Retorna jogador atual, caso o jogo não esteja em progresso, retorna nulo
+	 * @return Retorna jogador atual, caso o jogo não esteja em progresso retorna nulo
 	 */
 	public Jogador getJogadorAtual() {
 		if (indiceJogadorAtual != -1) {

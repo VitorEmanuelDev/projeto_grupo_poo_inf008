@@ -10,7 +10,6 @@ public class Campeonato implements java.io.Serializable {
 	 * e também uma lista com jogadores em situação de empate pelo primeiro lugar
 	 */
 	private static final long serialVersionUID = -3346276515940504216L;
-	// TODO consider putting here the indexCurrentPlayer, velocityModule and offsetPhase
 	private String nome;
 	private List<Jogador> jogadores;
 	private List<Jogador> jogadoresEmpatados;

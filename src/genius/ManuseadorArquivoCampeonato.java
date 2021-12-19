@@ -9,22 +9,39 @@ import java.io.ObjectOutputStream;
 public class ManuseadorArquivoCampeonato {
 
 	/**
-	 * Manuseador de arquivos, abstração de leitura e escrita de dados em forma persistente
+	 * Manuseador de arquivos, abstração de leitura e escrita de dados de campeonatos em forma persistente
 	 */
 	private String linhaCabecalho; // utilizada para salvar dados referentes ao estado atual do campeonato
 
+	/**
+	 * Construtor, zera a linha de cabeçalho inicial
+	 */
 	ManuseadorArquivoCampeonato() {
 		linhaCabecalho = "";
 	}
 
+	/**
+	 * @return   retorna a linha de cabeçalho atual
+	 */
 	public String getLinhaCabecalho() {
 		return linhaCabecalho;
 	}
 
+	/**
+	 * Define a nova linha de cabeçalho
+	 * @param linhaCabecalho   nova linha de cabeçalho a ser utilizada
+	 */
 	public void setLinhaCabecalho(String linhaCabecalho) {
 		this.linhaCabecalho = linhaCabecalho;
 	}
 
+	/**
+	 * Carrega o campeonato baseado no caminho do arquivo especificado
+	 * @param caminhoArquivo   caminho do arquivo a ser utilizado
+	 * @return   retorna o campeonato lido do arquivo
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	public Campeonato carregaCampeonato(String caminhoArquivo) throws IOException, ClassNotFoundException {
 		FileInputStream arquivoEntrada = new FileInputStream(caminhoArquivo);
 
@@ -46,6 +63,12 @@ public class ManuseadorArquivoCampeonato {
 		return campeonato;
 	}
 
+	/**
+	 * Salva campeonato no caminho especificado 
+	 * @param campeonato    campeonato a ser salvo
+	 * @param caminhoArquivo    caminho do arquivo onde o campeonato será salvo
+	 * @throws IOException
+	 */
 	public void salvaCampeonato(Campeonato campeonato, String caminhoArquivo) throws IOException {
 		// somente permitimos que o arquivo seja escrito caso a linhaCabecalho esteja definida
 		if (linhaCabecalho.isEmpty()) {
