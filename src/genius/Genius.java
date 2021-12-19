@@ -135,7 +135,10 @@ public class Genius implements ActionListener {
 		} else if (campeonatoAtual.checaEmpate()) {
 			gui.mostraDialogMensagem("Continuar jogo em fase extra.", "Ocorreu um empate!!!");
 
+			// reseta indice do jogador atual e indice do jogador que errou
+			indiceJogadorErrou = -1;
 			indiceJogadorAtual = 0;
+
 			campeonatoAtual.getJogador(indiceJogadorAtual).retomaJogada();
 			reiniciaFase();
 		} else {

@@ -185,16 +185,17 @@ public class GeniusGUI extends JPanel implements MouseListener {
 		tabela.getTableHeader().setForeground(Color.WHITE);
 		tabela.getAutoResizeMode();
 
-		JFrame frame = new JFrame("Resultados do " + campeonato.getNome() + " - " + java.time.LocalDate.now());
-		frame.setSize(220, 50);
+		String titulo = "Resultado do campeonato \"" + campeonato.getNome() + "\" ("
+						+ comboBoxDificuldade.getSelectedItem()  + ") - " + java.time.LocalDate.now();
+		JFrame frame = new JFrame(titulo);
+		frame.setSize(650, 400);
 		frame.getContentPane().setBackground(COR_FUNDO);
 		frame.setResizable(true);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		JScrollPane jspane = new JScrollPane(tabela);
-		jspane.setSize(220, 50);
+		jspane.setSize(650, 400);
 		jspane.setBackground(COR_FUNDO);
-		frame.add(jspane);  
-		frame.pack();
+		frame.add(jspane);
 		jspane.setVisible(true);
 		frame.setVisible(true);
 	}
