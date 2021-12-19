@@ -182,7 +182,7 @@ public class Genius implements ActionListener {
 			toques = 0;
 		}
 
-		// otimização, somente redenha a tela atual caso toques seja 0
+		// otimização, somente redesenha a tela atual caso toques seja 0
 		if (toques == 0) {
 			gui.repaint();
 		}
