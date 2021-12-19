@@ -41,9 +41,9 @@ public class GeniusGUI extends JPanel implements MouseListener {
 	private static final int ESPACO_QUADRADOS_LARGURA = 470;
 	private static final int ESPACO_QUADRADOS_ALTURA = 470;
 	private static final int ESPACO_QUADRADOS_OFFSET = (ALTURA - ESPACO_QUADRADOS_ALTURA) / 4;
-	private static final int ESCPACO_QUADRADOS = 25;
-	private static final int LARGURA_QUADRADOS = ESPACO_QUADRADOS_LARGURA / 2 - ESCPACO_QUADRADOS *2;
-	private static final int ALTURA_QUADRADOS = ESPACO_QUADRADOS_ALTURA / 2 - ESCPACO_QUADRADOS *2;
+	private static final int ESPACO_QUADRADOS = 25;
+	private static final int LARGURA_QUADRADOS = ESPACO_QUADRADOS_LARGURA / 2 - ESPACO_QUADRADOS *2;
+	private static final int ALTURA_QUADRADOS = ESPACO_QUADRADOS_ALTURA / 2 - ESPACO_QUADRADOS *2;
 	private static final int NUM_QUADRADOS = 4;
 	private static final int LARGURA_BOTAO_PRINCIPAL = 100;
 	private static final int ALTURA_BOTAO_PRINCIPAL = 25;
@@ -308,10 +308,10 @@ public class GeniusGUI extends JPanel implements MouseListener {
 		if (jogadorAtual != null) {
 			grafico.setColor(Color.WHITE);
 			grafico.setFont(new Font("Comic", Font.BOLD, 14));
-			grafico.drawString("Jogador: " + jogadorAtual.getApelido(), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET - 20);
-			grafico.drawString("Fase:  " + (jogadorAtual.getFaseAtual() - controlador.getOffsetFase()), (LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
+			grafico.drawString("Jogador: " + jogadorAtual.getApelido(), (LARGURA/2) - 60,  ESPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET - 20);
+			grafico.drawString("Fase:  " + (jogadorAtual.getFaseAtual() - controlador.getOffsetFase()), (LARGURA/2) - 60,  ESPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET);
 			grafico.drawString("Pontos totais: " + jogadorAtual.getPontuacao() + " (+" + jogadorAtual.ultimaPontuacaoAcrescentada() + ")",
-					(LARGURA/2) - 60,  ESCPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 20);
+					(LARGURA/2) - 60,  ESPACO_QUADRADOS + ESPACO_QUADRADOS_OFFSET + 20);
 		}
 
 		Jogador jogadorErrou = controlador.getJogadorErrou();
